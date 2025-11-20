@@ -37,6 +37,69 @@
             margin: 0 auto;
         }
         
+        /* شاشة الحماية */
+        .protection-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .protection-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .protection-form input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .protection-form button {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .protection-form button:hover {
+            background: #059669;
+        }
+        
+        .error-message {
+            color: #fef3c7;
+            background: rgba(220, 38, 38, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        
         header {
             text-align: center;
             margin-bottom: 30px;
@@ -379,7 +442,19 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- شاشة الحماية -->
+    <div class="protection-screen" id="protectionScreen">
+        <div class="protection-form">
+            <h2>الوصول إلى تطبيق Dali AI</h2>
+            <p>أدخل كود التفعيل للوصول إلى التطبيق</p>
+            <input type="password" id="accessCode" placeholder="أدخل كود التفعيل">
+            <button id="unlockBtn">فتح التطبيق</button>
+            <div class="error-message" id="errorMessage">كود التفعيل غير صحيح. حاول مرة أخرى.</div>
+        </div>
+    </div>
+
+    <!-- التطبيق الرئيسي (مخفي في البداية) -->
+    <div class="container" id="mainApp" style="display: none;">
         <header>
             <h1>منشئ السيرة الذاتية - Dali AI</h1>
             <p>أنشئ سيرتك الذاتية الاحترافية بسهولة وقم بتنزيلها بصيغة PDF</p>
@@ -560,6 +635,36 @@
     </div>
 
     <script>
+        // نظام الحماية
+        const protectionScreen = document.getElementById('protectionScreen');
+        const mainApp = document.getElementById('mainApp');
+        const accessCodeInput = document.getElementById('accessCode');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const correctCode = "ai cv arabic123"; // كود التفعيل
+        
+        unlockBtn.addEventListener('click', function() {
+            const enteredCode = accessCodeInput.value.trim();
+            
+            if (enteredCode === correctCode) {
+                // الكود صحيح، إظهار التطبيق
+                protectionScreen.style.display = 'none';
+                mainApp.style.display = 'block';
+            } else {
+                // الكود خاطئ، إظهار رسالة الخطأ
+                errorMessage.style.display = 'block';
+                accessCodeInput.value = '';
+                accessCodeInput.focus();
+            }
+        });
+        
+        // السماح بالدخول باستخدام زر Enter
+        accessCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                unlockBtn.click();
+            }
+        });
+        
         // العناصر الرئيسية
         const cvPreview = document.getElementById('cvPreview');
         const templateOptions = document.querySelectorAll('.template-option');
@@ -683,39 +788,98 @@
             cvPreview.classList.toggle('dark-mode');
         });
         
-        // تحميل PDF
+        // تحميل PDF - الإصاح المحسن
         downloadPdfBtn.addEventListener('click', function() {
             // استخدام html2canvas و jsPDF لتحويل السيرة الذاتية إلى PDF
+            const { jsPDF } = window.jspdf;
+            
             html2canvas(cvPreview, {
                 scale: 2,
                 useCORS: true,
-                logging: false
+                logging: false,
+                width: cvPreview.scrollWidth,
+                height: cvPreview.scrollHeight
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const imgWidth = 210; // عرض A4 بالملم
-                const pageHeight = 295; // ارتفاع A4 بالملم
                 const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
                 
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-                
-                while (heightLeft >= 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
-                }
-                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
                 pdf.save('السيرة_الذاتية.pdf');
+                
+                // إظهار رسالة النجاح
+                showSuccessAlert('تم تحميل السيرة الذاتية بصيغة PDF بنجاح!');
+            }).catch(error => {
+                console.error('Error generating PDF:', error);
+                alert('حدث خطأ أثناء إنشاء ملف PDF. يرجى المحاولة مرة أخرى.');
             });
         });
         
-        // تحميل Word (محاكاة)
+        // تحميل Word (محاكاة باستخدام HTML)
         downloadWordBtn.addEventListener('click', function() {
-            alert('سيتم إضافة دعم تحميل ملف Word في الإصدار القادم');
+            // إنشاء محتوى HTML للسيرة الذاتية
+            const cvContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>السيرة الذاتية - ${previewName.textContent}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 40px; direction: rtl; }
+                        h1 { color: #1e40af; }
+                        .section { margin-bottom: 20px; }
+                        .section-title { color: #1e40af; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
+                    </style>
+                </head>
+                <body>
+                    <h1>${previewName.textContent}</h1>
+                    <h2>${previewTitle.textContent}</h2>
+                    
+                    <div class="section">
+                        <h3 class="section-title">المعلومات الشخصية</h3>
+                        <p><strong>تاريخ الميلاد:</strong> ${previewBirthDate.textContent}</p>
+                        <p><strong>الطول:</strong> ${previewHeight.textContent}</p>
+                        <p><strong>الهاتف:</strong> ${previewPhone.textContent}</p>
+                        <p><strong>البريد الإلكتروني:</strong> ${previewEmail.textContent}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">المؤهلات العلمية</h3>
+                        ${previewEducation.innerHTML}
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">الخبرات المهنية</h3>
+                        ${previewExperience.innerHTML}
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">المهارات</h3>
+                        ${previewSkills.innerHTML}
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">الهوايات</h3>
+                        ${previewHobbies.innerHTML}
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // إنشاء ملف Word (HTML يمكن فتحه في Word)
+            const blob = new Blob([cvContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'السيرة_الذاتية.doc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // إظهار رسالة النجاح
+            showSuccessAlert('تم تحميل السيرة الذاتية بصيغة Word بنجاح!');
         });
         
         // طباعة
@@ -777,7 +941,7 @@
             }
             
             // إظهار رسالة النجاح
-            showSuccessAlert();
+            showSuccessAlert('تم حفظ التغييرات بنجاح!');
         }
         
         // تنسيق التاريخ
@@ -789,7 +953,8 @@
         }
         
         // إظهار رسالة النجاح
-        function showSuccessAlert() {
+        function showSuccessAlert(message = 'تم حفظ السيرة الذاتية بنجاح! يمكنك الآن تحميلها بصيغة PDF.') {
+            successAlert.textContent = message;
             successAlert.style.display = 'block';
             setTimeout(() => {
                 successAlert.style.display = 'none';
