@@ -72,24 +72,12 @@
         
         .password-container input {
             width: 100%;
-            padding: 12px 40px 12px 12px;
+            padding: 12px;
             margin: 15px 0;
             border: none;
             border-radius: 5px;
             font-size: 16px;
             text-align: center;
-        }
-        
-        .toggle-password {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #666;
-            cursor: pointer;
-            font-size: 16px;
         }
         
         .protection-form button {
@@ -118,28 +106,6 @@
         }
         
         /* شريط اللغة */
-        .language-bar {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 15px;
-            gap: 10px;
-        }
-        
-        .lang-btn {
-            padding: 8px 15px;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        .lang-btn.active {
-            background: rgba(255, 255, 255, 0.4);
-            font-weight: bold;
-        }
-        
         .app-language-bar {
             display: flex;
             justify-content: flex-end;
@@ -614,15 +580,6 @@
             border-bottom: 1px solid #e5e7eb;
         }
         
-        body[dir="ltr"] .password-container input {
-            padding: 12px 12px 12px 40px;
-        }
-        
-        body[dir="ltr"] .toggle-password {
-            right: auto;
-            left: 10px;
-        }
-        
         /* إعدادات الصورة في القوالب */
         .image-position {
             display: flex;
@@ -654,8 +611,7 @@
             <h2 id="protectionTitle">الوصول إلى تطبيق Dali AI</h2>
             <p id="protectionText">أدخل كود التفعيل للوصول إلى التطبيق</p>
             <div class="password-container">
-                <input type="password" id="accessCode" placeholder="أدخل كود التفعيل">
-                <button class="toggle-password" id="togglePassword">👁️ إظهار</button>
+                <input type="text" id="accessCode" placeholder="أدخل كود التفعيل">
             </div>
             <button id="unlockBtn">فتح التطبيق</button>
             <div class="error-message" id="errorMessage">كود التفعيل غير صحيح. حاول مرة أخرى.</div>
@@ -951,9 +907,7 @@
                 educationPlaceholder: "اذكر شهاداتك العلمية (شهادة، المؤسسة، السنة)",
                 experiencePlaceholder: "اذكر خبراتك العملية (المسمى الوظيفي، الشركة، الفترة)",
                 skillsPlaceholder: "مثال: القيادة، الاتصال، البرمجة",
-                hobbiesPlaceholder: "مثال: القراءة، السفر، الرياضة",
-                showPassword: "👁️ إظهار",
-                hidePassword: "🙈 إخفاء"
+                hobbiesPlaceholder: "مثال: القراءة، السفر، الرياضة"
             },
             fr: {
                 protectionTitle: "Accéder à l'application Dali AI",
@@ -1024,9 +978,7 @@
                 educationPlaceholder: "Mentionnez vos diplômes (diplôme, établissement, année)",
                 experiencePlaceholder: "Mentionnez vos expériences (poste, entreprise, période)",
                 skillsPlaceholder: "Exemple: Leadership, Communication, Programmation",
-                hobbiesPlaceholder: "Exemple: Lecture, Voyage, Sport",
-                showPassword: "👁️ Afficher",
-                hidePassword: "🙈 Cacher"
+                hobbiesPlaceholder: "Exemple: Lecture, Voyage, Sport"
             },
             en: {
                 protectionTitle: "Access Dali AI Application",
@@ -1097,9 +1049,7 @@
                 educationPlaceholder: "Mention your certificates (certificate, institution, year)",
                 experiencePlaceholder: "Mention your experiences (position, company, period)",
                 skillsPlaceholder: "Example: Leadership, Communication, Programming",
-                hobbiesPlaceholder: "Example: Reading, Travel, Sports",
-                showPassword: "👁️ Show",
-                hidePassword: "🙈 Hide"
+                hobbiesPlaceholder: "Example: Reading, Travel, Sports"
             }
         };
 
@@ -1109,21 +1059,7 @@
         const accessCodeInput = document.getElementById('accessCode');
         const unlockBtn = document.getElementById('unlockBtn');
         const errorMessage = document.getElementById('errorMessage');
-        const togglePassword = document.getElementById('togglePassword');
         const correctCode = "اللهم صلي و سلم على سيدنا محمد"; // كود التفعيل الجديد
-        
-        // تبديل إظهار/إخفاء كلمة المرور
-        function setupPasswordToggle() {
-            togglePassword.addEventListener('click', function() {
-                if (accessCodeInput.type === 'password') {
-                    accessCodeInput.type = 'text';
-                    togglePassword.textContent = translations[document.documentElement.lang].hidePassword;
-                } else {
-                    accessCodeInput.type = 'password';
-                    togglePassword.textContent = translations[document.documentElement.lang].showPassword;
-                }
-            });
-        }
         
         // تغيير اللغة في شاشة الحماية
         function changeProtectionLanguage(lang) {
@@ -1138,13 +1074,6 @@
                     }
                 }
             });
-            
-            // تحديث نص زر إظهار/إخفاء كلمة المرور
-            if (accessCodeInput.type === 'password') {
-                togglePassword.textContent = translations[lang].showPassword;
-            } else {
-                togglePassword.textContent = translations[lang].hidePassword;
-            }
         }
         
         // تغيير اللغة في التطبيق الرئيسي
@@ -1173,16 +1102,6 @@
                 }
             });
         }
-        
-        // إضافة مستمعي الأحداث لأزرار اللغة في شاشة الحماية
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const lang = this.getAttribute('data-lang');
-                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                changeProtectionLanguage(lang);
-            });
-        });
         
         // إضافة مستمعي الأحداث لأزرار اللغة في التطبيق
         document.querySelectorAll('.app-lang-btn').forEach(btn => {
@@ -1595,7 +1514,6 @@
         }
         
         // تهيئة أولية
-        setupPasswordToggle();
         changeProtectionLanguage('ar');
         changeAppLanguage('ar');
         updatePreview();
