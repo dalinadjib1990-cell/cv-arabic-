@@ -1,2 +1,1788 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV AI Arabic - مولد السيرة الذاتية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+        }
 
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --text-color: #333;
+            --bg-color: #f8f9fa;
+            --card-bg: #fff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --gold-color: #FFD700;
+            --black-color: #000000;
+            --red-color: #FF0000;
+        }
+
+        .dark-mode {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #34495e;
+            --dark-color: #ecf0f1;
+            --success-color: #2ecc71;
+            --text-color: #ecf0f1;
+            --bg-color: #1a252f;
+            --card-bg: #2c3e50;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --gold-color: #FFD700;
+            --black-color: #FFFFFF;
+            --red-color: #FF6B6B;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo i {
+            color: var(--accent-color);
+            font-size: 2rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .lang-selector select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .app-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 992px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sidebar {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px var(--shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .main-content {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px var(--shadow);
+            overflow: auto;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary-color);
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--accent-color);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        /* تصميم تحسينات الصورة */
+        .image-controls {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg-color);
+            border-radius: 10px;
+        }
+
+        .image-preview-container {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* أشكال الصورة في المعاينة */
+        .shape-circle .image-preview { border-radius: 50%; }
+        .shape-square .image-preview { border-radius: 10px; }
+        .shape-hexagon .image-preview { 
+            border-radius: 0;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        .image-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .image-option {
+            padding: 8px;
+            border-radius: 5px;
+            border: 2px solid transparent;
+            background: var(--bg-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .image-option:hover {
+            transform: translateY(-3px);
+        }
+
+        .image-option.active {
+            border-color: var(--accent-color);
+            background: rgba(231, 76, 60, 0.1);
+        }
+
+        .image-option i {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* شريط المهارات */
+        .skill-item {
+            margin-bottom: 15px;
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .skill-name {
+            font-weight: 500;
+        }
+
+        .skill-percentage {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .skill-bar {
+            height: 10px;
+            background-color: #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .skill-level {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+            border-radius: 5px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* اللغات */
+        .language-item {
+            margin-bottom: 15px;
+        }
+
+        .language-level {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .level-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ddd;
+        }
+
+        .level-dot.active {
+            background-color: var(--success-color);
+        }
+
+        /* القوالب */
+        .templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .template {
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .template:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 30px var(--shadow);
+        }
+
+        .template.active {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .template-preview {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .template-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--accent-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+
+        .template-name {
+            padding: 15px;
+            text-align: center;
+            background-color: var(--bg-color);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* الأزرار */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, var(--success-color), #2ecc71);
+            color: white;
+        }
+
+        .btn-accent {
+            background: linear-gradient(45deg, var(--accent-color), #e17055);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0,0,0,0.1);
+        }
+
+        /* معاينة السيرة الذاتية - صفحة واحدة A4 */
+        .cv-preview-container {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .cv-preview {
+            width: 100%;
+            height: 100%;
+            padding: 25mm;
+            position: relative;
+            overflow: hidden;
+            font-size: 12pt;
+            line-height: 1.5;
+        }
+
+        /* أنماط القوالب المختلفة - إصلاح المشكلة هنا */
+        .template1 {
+            background: white;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .template2 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .template2 * {
+            color: white !important;
+        }
+
+        .template3 {
+            background: #FFD700;
+            color: #000;
+            border: 5px solid #000;
+        }
+
+        .template3 * {
+            color: #000 !important;
+        }
+
+        .template4 {
+            background: linear-gradient(45deg, #000 30%, #FF0000 100%);
+            color: white;
+        }
+
+        .template4 * {
+            color: white !important;
+        }
+
+        .template5 {
+            background: white;
+            background-image: 
+                radial-gradient(#FFD700 2px, transparent 2px),
+                radial-gradient(#FF0000 2px, transparent 2px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+
+        .template6 {
+            background: #f8f9fa;
+            border-left: 15px solid #FFD700;
+            border-right: 15px solid #FF0000;
+        }
+
+        .template7 {
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template7::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: linear-gradient(90deg, #FFD700, #FF0000, #000);
+            z-index: 1;
+        }
+
+        .hexagon-bg {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            opacity: 0.1;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 0 L93 25 L93 75 L50 100 L7 75 L7 25 Z' fill='%23000'/%3E%3C/svg%3E");
+            background-size: 50px;
+            transform: rotate(30deg);
+            z-index: 0;
+        }
+
+        /* تنسيقات داخلية للسيرة الذاتية */
+        .cv-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid;
+            border-image: linear-gradient(90deg, var(--secondary-color), var(--accent-color)) 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* تعديل: الصورة تبقى في الأعلى دائماً */
+        .image-position-left .cv-header {
+            flex-direction: row;
+            text-align: right;
+            align-items: flex-start;
+        }
+
+        .image-position-center .cv-header {
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+        }
+
+        .image-position-right .cv-header {
+            flex-direction: row-reverse;
+            text-align: left;
+            align-items: flex-start;
+        }
+
+        .profile-img-container {
+            flex-shrink: 0;
+            margin: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* أشكال الصورة في المخرجات - إصلاح المشكلة هنا */
+        .profile-img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .profile-img-circle {
+            border-radius: 50%;
+        }
+
+        .profile-img-square {
+            border-radius: 10px;
+        }
+
+        .profile-img-hexagon {
+            border-radius: 0;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        }
+
+        .personal-info {
+            flex: 1;
+            position: relative;
+            z-index: 2;
+        }
+
+        .personal-info h1 {
+            font-size: 28pt;
+            margin-bottom: 5px;
+        }
+
+        .template1 .personal-info h1 {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .template2 .personal-info h1,
+        .template4 .personal-info h1 {
+            color: white !important;
+            -webkit-text-fill-color: white !important;
+        }
+
+        .template3 .personal-info h1 {
+            color: #000 !important;
+            -webkit-text-fill-color: #000 !important;
+        }
+
+        .personal-info h2 {
+            font-size: 18pt;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+
+        .template1 .personal-info h2 { color: var(--secondary-color); }
+        .template2 .personal-info h2,
+        .template4 .personal-info h2 { color: white !important; }
+        .template3 .personal-info h2 { color: #000 !important; }
+
+        .personal-info > p {
+            font-size: 11pt;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .contact-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10pt;
+        }
+
+        .template1 .contact-item i { color: var(--accent-color); }
+        .template2 .contact-item i,
+        .template4 .contact-item i { color: white !important; }
+        .template3 .contact-item i { color: #000 !important; }
+
+        /* أقسام السيرة الذاتية */
+        .cv-sections-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cv-section {
+            margin-bottom: 22px;
+        }
+
+        .cv-section h3 {
+            font-size: 16pt;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .template1 .cv-section h3 {
+            color: var(--primary-color);
+            border-bottom-color: var(--secondary-color);
+        }
+
+        .template2 .cv-section h3,
+        .template4 .cv-section h3 {
+            color: white !important;
+            border-bottom-color: rgba(255,255,255,0.3) !important;
+        }
+
+        .template3 .cv-section h3 {
+            color: #000 !important;
+            border-bottom-color: #FF0000 !important;
+        }
+
+        .experience-item, .education-item {
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .template3 .experience-item,
+        .template3 .education-item {
+            border-bottom-color: rgba(0,0,0,0.1);
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .item-title {
+            font-weight: 700;
+            font-size: 12pt;
+        }
+
+        .template1 .item-title { color: var(--primary-color); }
+        .template2 .item-title,
+        .template4 .item-title { color: white !important; }
+        .template3 .item-title { color: #000 !important; }
+
+        .item-date {
+            font-weight: 500;
+            font-size: 11pt;
+        }
+
+        .template1 .item-date { color: var(--accent-color); }
+        .template2 .item-date,
+        .template4 .item-date { color: rgba(255,255,255,0.8) !important; }
+        .template3 .item-date { color: #000 !important; }
+
+        .item-subtitle {
+            font-style: italic;
+            margin-bottom: 8px;
+            font-size: 11pt;
+        }
+
+        .template1 .item-subtitle { color: #666; }
+        .template2 .item-subtitle,
+        .template4 .item-subtitle { color: rgba(255,255,255,0.8) !important; }
+        .template3 .item-subtitle { color: #000 !important; }
+
+        .item-description {
+            font-size: 11pt;
+            line-height: 1.5;
+        }
+
+        .template1 .item-description { color: #444; }
+        .template2 .item-description,
+        .template4 .item-description { color: rgba(255,255,255,0.9) !important; }
+        .template3 .item-description { color: #000 !important; }
+
+        /* الشبكات */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .languages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+        }
+
+        .language-display {
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .template1 .language-display { background: #f9f9f9; }
+        .template2 .language-display,
+        .template4 .language-display { background: rgba(255,255,255,0.1) !important; }
+        .template3 .language-display { background: rgba(0,0,0,0.1); }
+
+        .language-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .language-percentage {
+            font-size: 10pt;
+        }
+
+        .template1 .language-percentage { color: var(--accent-color); }
+        .template2 .language-percentage,
+        .template4 .language-percentage { color: white !important; }
+        .template3 .language-percentage { color: #000 !important; }
+
+        footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-color);
+            border-top: 1px solid var(--shadow);
+        }
+
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: linear-gradient(45deg, var(--success-color), #2ecc71);
+            color: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px var(--shadow);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* زر إضافة العناصر */
+        .add-item-btn {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background: var(--bg-color);
+            border: 2px dashed var(--secondary-color);
+            border-radius: 8px;
+            color: var(--secondary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .add-item-btn:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        /* عناصر قابلة للإضافة */
+        .dynamic-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .dynamic-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .delete-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-magic"></i>
+                <h1>CV AI Arabic Pro</h1>
+            </div>
+            <div class="controls">
+                <div class="lang-selector">
+                    <select id="language">
+                        <option value="ar">العربية 🇸🇦</option>
+                        <option value="fr">Français 🇫🇷</option>
+                        <option value="en">English 🇺🇸</option>
+                    </select>
+                </div>
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="app-container">
+            <div class="sidebar">
+                <h3 class="section-title"><i class="fas fa-user-circle"></i> البيانات الشخصية</h3>
+                
+                <div class="form-group">
+                    <label for="fullName">الاسم الكامل</label>
+                    <input type="text" id="fullName" class="form-control" placeholder="أدخل اسمك الكامل" value="ريتشارد سانشيز">
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobTitle">المسمى الوظيفي</label>
+                    <input type="text" id="jobTitle" class="form-control" placeholder="مثال: مصمم جرافيك" value="مصمم منتجات مبدع">
+                </div>
+                
+                <div class="image-controls">
+                    <div class="image-preview-container shape-circle" id="imageContainer">
+                        <img id="imagePreview" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="صورة شخصية" class="image-preview">
+                    </div>
+                    
+                    <button onclick="document.getElementById('imageUpload').click()" class="btn btn-secondary" style="margin-bottom: 15px;">
+                        <i class="fas fa-cloud-upload-alt"></i> رفع صورة جديدة
+                    </button>
+                    <input type="file" id="imageUpload" accept="image/*" class="form-control" style="display: none;">
+                    
+                    <div class="form-group">
+                        <label>موقع الصورة (في الأعلى):</label>
+                        <div class="image-options">
+                            <div class="image-option active" data-option="position" data-value="right">
+                                <i class="fas fa-align-right"></i>
+                                <span>يمين</span>
+                            </div>
+                            <div class="image-option" data-option="position" data-value="center">
+                                <i class="fas fa-align-center"></i>
+                                <span>وسط</span>
+                            </div>
+                            <div class="image-option" data-option="position" data-value="left">
+                                <i class="fas fa-align-left"></i>
+                                <span>يسار</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>شكل الصورة:</label>
+                        <div class="image-options">
+                            <div class="image-option active" data-option="shape" data-value="circle">
+                                <i class="fas fa-circle"></i>
+                                <span>دائري</span>
+                            </div>
+                            <div class="image-option" data-option="shape" data-value="square">
+                                <i class="fas fa-square"></i>
+                                <span>مربع</span>
+                            </div>
+                            <div class="image-option" data-option="shape" data-value="hexagon">
+                                <i class="fas fa-hexagon"></i>
+                                <span>سداسي</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="about">نبذة عني</label>
+                    <textarea id="about" class="form-control" rows="4" placeholder="أكتب نبذة مختصرة عنك...">مصمم منتجات مبدع مع خبرة 7 سنوات في تصميم الواجهات والتجارب الرقمية. أتمتع بمهارات قوية في البحث عن المستخدمين وحل المشكلات الإبداعية. أحب العمل في فرق متعددة التخصصات لإنشاء منتجات استثنائية.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">رقم الهاتف</label>
+                    <input type="text" id="phone" class="form-control" value="+123-456-7890">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" class="form-control" value="hello@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="address">العنوان</label>
+                    <input type="text" id="address" class="form-control" value="سيدني، أستراليا">
+                </div>
+                
+                <h3 class="section-title" style="margin-top: 30px;"><i class="fas fa-briefcase"></i> الخبرات العملية</h3>
+                <div id="experiences">
+                    <div class="dynamic-item">
+                        <div class="form-group">
+                            <input type="text" class="form-control company" placeholder="اسم الشركة" value="Arrowal Industries">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control position" placeholder="المسمى الوظيفي" value="مصمم منتجات أول">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control date" placeholder="الفترة (مثال: 2020 - 2022)" value="2020 - 2022">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-control description" placeholder="المسؤوليات والإنجازات" rows="3">قمت بتصميم وتطوير منتجات رقمية مبتكرة بالتعاون مع فرق التطوير والتسويق. أدت تصاميمي إلى زيادة تفاعل المستخدمين بنسبة 40%.</textarea>
+                        </div>
+                    </div>
+                </div>
+                <button class="add-item-btn" onclick="addExperience()">
+                    <i class="fas fa-plus-circle"></i> إضافة خبرة جديدة
+                </button>
+                
+                <h3 class="section-title" style="margin-top: 30px;"><i class="fas fa-graduation-cap"></i> التعليم</h3>
+                <div id="educations">
+                    <div class="dynamic-item">
+                        <div class="form-group">
+                            <input type="text" class="form-control institution" placeholder="اسم المؤسسة التعليمية" value="Borcelle University">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control degree" placeholder="التخصص/الشهادة" value="ماجستير في إدارة الأعمال">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control date" placeholder="الفترة (مثال: 2014 - 2018)" value="2014 - 2018">
+                        </div>
+                    </div>
+                </div>
+                <button class="add-item-btn" onclick="addEducation()">
+                    <i class="fas fa-plus-circle"></i> إضافة تعليم جديد
+                </button>
+                
+                <h3 class="section-title" style="margin-top: 30px;"><i class="fas fa-star"></i> المهارات المتقدمة</h3>
+                <div id="skillsContainer">
+                    <div class="dynamic-item">
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <input type="text" class="form-control skill-name-input" value="تصميم UI/UX" placeholder="اسم المهارة" style="width: 70%; display: inline;">
+                                <input type="number" class="form-control skill-percentage-input" value="85" min="0" max="100" placeholder="النسبة" style="width: 25%; display: inline;">
+                                <span>%</span>
+                            </div>
+                            <div class="skill-bar">
+                                <div class="skill-level" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="add-item-btn" onclick="addSkill()">
+                    <i class="fas fa-plus-circle"></i> إضافة مهارة جديدة
+                </button>
+                
+                <h3 class="section-title" style="margin-top: 30px;"><i class="fas fa-language"></i> اللغات</h3>
+                <div id="languagesContainer">
+                    <div class="dynamic-item">
+                        <div class="form-group">
+                            <input type="text" class="form-control language-name" value="العربية" placeholder="اللغة">
+                        </div>
+                        <div class="form-group">
+                            <label>مستوى الإتقان:</label>
+                            <select class="form-control language-level">
+                                <option value="20">مبتدئ (20%)</option>
+                                <option value="40">متوسط (40%)</option>
+                                <option value="60">جيد (60%)</option>
+                                <option value="80">ممتاز (80%)</option>
+                                <option value="100" selected>متمكن (100%)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button class="add-item-btn" onclick="addLanguage()">
+                    <i class="fas fa-plus-circle"></i> إضافة لغة جديدة
+                </button>
+                
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="previewBtn">
+                        <i class="fas fa-eye"></i> معاينة السيرة
+                    </button>
+                    <button class="btn btn-success" id="saveBtn">
+                        <i class="fas fa-save"></i> حفظ التغييرات
+                    </button>
+                </div>
+            </div>
+            
+            <div class="main-content">
+                <h3 class="section-title"><i class="fas fa-palette"></i> القوالب الإبداعية</h3>
+                <div class="templates">
+                    <div class="template active" data-template="1">
+                        <div class="template-preview" style="background: white;"></div>
+                        <div class="template-badge">كلاسيكي</div>
+                        <div class="template-name">الأزرق الإبداعي</div>
+                    </div>
+                    <div class="template" data-template="2">
+                        <div class="template-preview" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                        <div class="template-badge">احترافي</div>
+                        <div class="template-name">البنفسجي المذهل</div>
+                    </div>
+                    <div class="template" data-template="3">
+                        <div class="template-preview" style="background: #FFD700; border: 3px solid #000;"></div>
+                        <div class="template-badge">ذهبي</div>
+                        <div class="template-name">الذهبي والأسود</div>
+                    </div>
+                    <div class="template" data-template="4">
+                        <div class="template-preview" style="background: linear-gradient(45deg, #000 30%, #FF0000 100%);"></div>
+                        <div class="template-badge">جريء</div>
+                        <div class="template-name">الأحمر والأسود</div>
+                    </div>
+                    <div class="template" data-template="5">
+                        <div class="template-preview" style="background: white; background-image: radial-gradient(#FFD700 2px, transparent 2px), radial-gradient(#FF0000 2px, transparent 2px); background-size: 60px 60px; background-position: 0 0, 30px 30px;"></div>
+                        <div class="template-badge">مبدع</div>
+                        <div class="template-name">النقاط الملونة</div>
+                    </div>
+                    <div class="template" data-template="6">
+                        <div class="template-preview" style="background: #f8f9fa; border-left: 15px solid #FFD700; border-right: 15px solid #FF0000;"></div>
+                        <div class="template-badge">حديث</div>
+                        <div class="template-name">الحواف الملونة</div>
+                    </div>
+                    <div class="template" data-template="7">
+                        <div class="template-preview" style="background: white; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 5px; background: linear-gradient(90deg, #FFD700, #FF0000, #000);"></div>
+                        </div>
+                        <div class="template-badge">فريد</div>
+                        <div class="template-name">سداسيات العسل</div>
+                    </div>
+                </div>
+                
+                <h3 class="section-title" style="margin-top: 30px;"><i class="fas fa-file-alt"></i> معاينة السيرة الذاتية</h3>
+                <div style="text-align: center; margin-bottom: 15px; color: var(--accent-color);">
+                    <i class="fas fa-info-circle"></i> السيرة الذاتية في صفحة A4 واحدة - جاهزة للطباعة
+                </div>
+                <div class="cv-preview-container">
+                    <div id="cvPreview" class="cv-preview template1 image-position-right">
+                        <!-- سيتم ملؤها بالجافاسكريبت -->
+                    </div>
+                </div>
+                
+                <div class="btn-group" style="margin-top: 30px;">
+                    <button class="btn btn-primary" id="exportPdf">
+                        <i class="fas fa-file-pdf"></i> تصدير PDF
+                    </button>
+                    <button class="btn btn-success" id="exportWord">
+                        <i class="fas fa-file-word"></i> تصدير Word
+                    </button>
+                    <button class="btn btn-accent" id="printBtn">
+                        <i class="fas fa-print"></i> طباعة مباشرة
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>CV AI Arabic Pro &copy; 2023 - مولد السير الذاتية الإبداعي | جميع الحقوق محفوظة</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; color: var(--secondary-color);">
+                <i class="fas fa-bolt"></i> 7 قوالب إبداعية • تحكم كامل في التصميم • تصدير PDF وWord • صفحة واحدة A4
+            </p>
+        </footer>
+    </div>
+
+    <div id="alert" class="alert">
+        <i class="fas fa-check-circle"></i> تم حفظ التغييرات بنجاح!
+    </div>
+
+    <script>
+        // البيانات الأساسية
+        let currentTemplate = '1';
+        let imagePosition = 'right';
+        let imageShape = 'circle';
+        let isDarkMode = false;
+        let cvData = {};
+
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحميل البيانات المحفوظة
+            loadSavedData();
+            
+            // إعداد معالجي الأحداث
+            setupEventListeners();
+            
+            // تحديث المعاينة أول مرة
+            updatePreview();
+            
+            // إعداد تحميل الصورة
+            document.getElementById('imageUpload').addEventListener('change', handleImageUpload);
+            
+            // إعداد أزرار التحكم بالصورة
+            document.querySelectorAll('.image-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const optionType = this.getAttribute('data-option');
+                    const value = this.getAttribute('data-value');
+                    
+                    // إزالة النشاط من جميع الأزرار من نفس النوع
+                    document.querySelectorAll(`[data-option="${optionType}"]`).forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // تفعيل الزر المختار
+                    this.classList.add('active');
+                    
+                    // تحديث الإعدادات
+                    if (optionType === 'position') {
+                        imagePosition = value;
+                    } else if (optionType === 'shape') {
+                        imageShape = value;
+                        document.getElementById('imageContainer').className = `image-preview-container shape-${value}`;
+                    }
+                    
+                    updatePreview();
+                });
+            });
+            
+            // إعداد أزرار القوالب - إصلاح المشكلة هنا
+            document.querySelectorAll('.template').forEach(template => {
+                template.addEventListener('click', function() {
+                    document.querySelectorAll('.template').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    currentTemplate = this.getAttribute('data-template');
+                    updatePreview();
+                });
+            });
+            
+            // إعداد تحديث تلقائي للعناصر الديناميكية
+            setupDynamicInputs();
+        });
+
+        // معالج تحميل الصورة
+        function handleImageUpload(e) {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    document.getElementById('imagePreview').src = event.target.result;
+                    updatePreview();
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // إعداد معالجي الأحداث للعناصر الديناميكية
+        function setupDynamicInputs() {
+            // تحديث المعاينة عند تغيير أي حقل
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('form-control')) {
+                    updatePreview();
+                    
+                    // تحديث شريط المهارات
+                    if (e.target.classList.contains('skill-percentage-input')) {
+                        const percentage = parseInt(e.target.value) || 0;
+                        const skillLevel = e.target.closest('.dynamic-item').querySelector('.skill-level');
+                        if (skillLevel) {
+                            skillLevel.style.width = Math.min(100, Math.max(0, percentage)) + '%';
+                        }
+                    }
+                }
+            });
+        }
+
+        // إعداد معالجي الأحداث الرئيسية
+        function setupEventListeners() {
+            // معاينة
+            document.getElementById('previewBtn').addEventListener('click', updatePreview);
+            
+            // حفظ
+            document.getElementById('saveBtn').addEventListener('click', saveData);
+            
+            // تصدير PDF
+            document.getElementById('exportPdf').addEventListener('click', exportToPDF);
+            
+            // تصدير Word
+            document.getElementById('exportWord').addEventListener('click', exportToWord);
+            
+            // طباعة
+            document.getElementById('printBtn').addEventListener('click', printCV);
+            
+            // تبديل الوضع الداكن
+            document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
+        }
+
+        // تحديث المعاينة - إصلاح المشكلة هنا
+        function updatePreview() {
+            const preview = document.getElementById('cvPreview');
+            
+            // إصلاح المشكلة 1: تحديث القالب بشكل صحيح
+            preview.className = `cv-preview template${currentTemplate} image-position-${imagePosition}`;
+            
+            // جمع البيانات من النموذج
+            const fullName = document.getElementById('fullName').value || "ريتشارد سانشيز";
+            const jobTitle = document.getElementById('jobTitle').value || "مصمم منتجات مبدع";
+            const about = document.getElementById('about').value || "مصمم منتجات مبدع مع خبرة في تصميم الواجهات والتجارب الرقمية.";
+            const phone = document.getElementById('phone').value || "+123-456-7890";
+            const email = document.getElementById('email').value || "hello@example.com";
+            const address = document.getElementById('address').value || "سيدني، أستراليا";
+            const imageSrc = document.getElementById('imagePreview').src;
+            
+            // بناء HTML المعاينة
+            let previewHTML = generateCVTemplate(fullName, jobTitle, about, phone, email, address, imageSrc);
+            preview.innerHTML = previewHTML;
+            
+            // إضافة خلفية السداسيات للقالب السابع
+            if (currentTemplate === '7') {
+                preview.innerHTML += '<div class="hexagon-bg"></div>';
+            }
+        }
+
+        // إنشاء قالب السيرة الذاتية - إصلاح المشكلة هنا
+        function generateCVTemplate(fullName, jobTitle, about, phone, email, address, imageSrc) {
+            // جمع الخبرات
+            let experiencesHTML = '';
+            const experienceItems = document.querySelectorAll('#experiences .dynamic-item');
+            experienceItems.forEach(item => {
+                const company = item.querySelector('.company').value || "Arrowal Industries";
+                const position = item.querySelector('.position').value || "مصمم منتجات أول";
+                const date = item.querySelector('.date').value || "2020 - 2022";
+                const description = item.querySelector('.description').value || "قمت بتصميم وتطوير منتجات رقمية مبتكرة.";
+                
+                experiencesHTML += `
+                    <div class="experience-item">
+                        <div class="item-header">
+                            <div class="item-title">${company}</div>
+                            <div class="item-date">${date}</div>
+                        </div>
+                        <div class="item-subtitle">${position}</div>
+                        <div class="item-description">${description}</div>
+                    </div>
+                `;
+            });
+            
+            // جمع التعليم
+            let educationsHTML = '';
+            const educationItems = document.querySelectorAll('#educations .dynamic-item');
+            educationItems.forEach(item => {
+                const institution = item.querySelector('.institution').value || "Borcelle University";
+                const degree = item.querySelector('.degree').value || "ماجستير في إدارة الأعمال";
+                const date = item.querySelector('.date').value || "2014 - 2018";
+                
+                educationsHTML += `
+                    <div class="education-item">
+                        <div class="item-header">
+                            <div class="item-title">${institution}</div>
+                            <div class="item-date">${date}</div>
+                        </div>
+                        <div class="item-subtitle">${degree}</div>
+                    </div>
+                `;
+            });
+            
+            // جمع المهارات
+            let skillsHTML = '';
+            const skillItems = document.querySelectorAll('#skillsContainer .dynamic-item');
+            skillItems.forEach(item => {
+                const skillName = item.querySelector('.skill-name-input').value || "تصميم UI/UX";
+                const percentage = parseInt(item.querySelector('.skill-percentage-input').value) || 85;
+                
+                skillsHTML += `
+                    <div class="skill-item">
+                        <div class="skill-header">
+                            <span class="skill-name">${skillName}</span>
+                            <span class="skill-percentage">${percentage}%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-level" style="width: ${percentage}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // جمع اللغات
+            let languagesHTML = '';
+            const languageItems = document.querySelectorAll('#languagesContainer .dynamic-item');
+            languageItems.forEach(item => {
+                const languageName = item.querySelector('.language-name').value || "العربية";
+                const level = parseInt(item.querySelector('.language-level').value) || 100;
+                let levelText = "مبتدئ";
+                
+                if (level >= 80) levelText = "متمكن";
+                else if (level >= 60) levelText = "جيد";
+                else if (level >= 40) levelText = "متوسط";
+                
+                languagesHTML += `
+                    <div class="language-display">
+                        <div class="language-name">${languageName}</div>
+                        <div class="language-percentage">${levelText} (${level}%)</div>
+                    </div>
+                `;
+            });
+            
+            // بناء صورة الملف الشخصي - إصلاح المشكلة 2: تطبيق شكل الصورة في المخرجات
+            let profileImageHTML = '';
+            if (imageSrc && !imageSrc.includes('placeholder')) {
+                // تحديد فئة الشكل بناءً على imageShape
+                let shapeClass = 'profile-img-circle';
+                if (imageShape === 'square') {
+                    shapeClass = 'profile-img-square';
+                } else if (imageShape === 'hexagon') {
+                    shapeClass = 'profile-img-hexagon';
+                }
+                
+                profileImageHTML = `
+                    <div class="profile-img-container">
+                        <img src="${imageSrc}" alt="${fullName}" class="profile-img ${shapeClass}">
+                    </div>
+                `;
+            }
+            
+            // بناء الهيكل الرئيسي - صفحة واحدة A4
+            return `
+                <div class="cv-header">
+                    ${imagePosition === 'left' ? profileImageHTML : ''}
+                    
+                    <div class="personal-info">
+                        <h1>${fullName}</h1>
+                        <h2>${jobTitle}</h2>
+                        <p>${about}</p>
+                        
+                        <div class="contact-items">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>${phone}</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>${email}</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${address}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    ${imagePosition === 'right' || imagePosition === 'center' ? profileImageHTML : ''}
+                </div>
+                
+                <div class="cv-sections-container">
+                    <div>
+                        ${experiencesHTML ? `
+                        <div class="cv-section">
+                            <h3><i class="fas fa-briefcase"></i> الخبرات العملية</h3>
+                            ${experiencesHTML}
+                        </div>` : ''}
+                        
+                        ${educationsHTML ? `
+                        <div class="cv-section">
+                            <h3><i class="fas fa-graduation-cap"></i> التعليم</h3>
+                            ${educationsHTML}
+                        </div>` : ''}
+                    </div>
+                    
+                    <div>
+                        ${skillsHTML ? `
+                        <div class="cv-section">
+                            <h3><i class="fas fa-star"></i> المهارات المتقدمة</h3>
+                            <div class="skills-grid">
+                                ${skillsHTML}
+                            </div>
+                        </div>` : ''}
+                        
+                        ${languagesHTML ? `
+                        <div class="cv-section">
+                            <h3><i class="fas fa-language"></i> اللغات</h3>
+                            <div class="languages-grid">
+                                ${languagesHTML}
+                            </div>
+                        </div>` : ''}
+                        
+                        <div class="cv-section">
+                            <h3><i class="fas fa-certificate"></i> الشهادات</h3>
+                            <div class="item-description">
+                                • شهادة تصميم UX من Google (2021)<br>
+                                • شهادة إدارة المشاريع PMP (2020)<br>
+                                • شهادة التسويق الرقمي (2019)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // إضافة خبرة جديدة
+        function addExperience() {
+            const experiencesDiv = document.getElementById('experiences');
+            const newExp = document.createElement('div');
+            newExp.className = 'dynamic-item';
+            newExp.innerHTML = `
+                <div class="dynamic-item-header">
+                    <h4 style="color: var(--accent-color);">خبرة جديدة</h4>
+                    <button class="delete-btn" onclick="this.parentElement.parentElement.remove(); updatePreview();">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control company" placeholder="اسم الشركة">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control position" placeholder="المسمى الوظيفي">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control date" placeholder="الفترة (مثال: 2020 - 2022)">
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control description" placeholder="المسؤوليات والإنجازات" rows="3"></textarea>
+                </div>
+            `;
+            experiencesDiv.appendChild(newExp);
+            updatePreview();
+        }
+
+        // إضافة تعليم جديد
+        function addEducation() {
+            const educationsDiv = document.getElementById('educations');
+            const newEdu = document.createElement('div');
+            newEdu.className = 'dynamic-item';
+            newEdu.innerHTML = `
+                <div class="dynamic-item-header">
+                    <h4 style="color: var(--accent-color);">تعليم جديد</h4>
+                    <button class="delete-btn" onclick="this.parentElement.parentElement.remove(); updatePreview();">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control institution" placeholder="اسم المؤسسة التعليمية">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control degree" placeholder="التخصص/الشهادة">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control date" placeholder="الفترة (مثال: 2014 - 2018)">
+                </div>
+            `;
+            educationsDiv.appendChild(newEdu);
+            updatePreview();
+        }
+
+        // إضافة مهارة جديدة
+        function addSkill() {
+            const skillsContainer = document.getElementById('skillsContainer');
+            const newSkill = document.createElement('div');
+            newSkill.className = 'dynamic-item';
+            newSkill.innerHTML = `
+                <div class="dynamic-item-header">
+                    <h4 style="color: var(--accent-color);">مهارة جديدة</h4>
+                    <button class="delete-btn" onclick="this.parentElement.parentElement.remove(); updatePreview();">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-header">
+                        <input type="text" class="form-control skill-name-input" value="مهارة جديدة" placeholder="اسم المهارة" style="width: 70%; display: inline;">
+                        <input type="number" class="form-control skill-percentage-input" value="50" min="0" max="100" placeholder="النسبة" style="width: 25%; display: inline;">
+                        <span>%</span>
+                    </div>
+                    <div class="skill-bar">
+                        <div class="skill-level" style="width: 50%"></div>
+                    </div>
+                </div>
+            `;
+            skillsContainer.appendChild(newSkill);
+            updatePreview();
+        }
+
+        // إضافة لغة جديدة
+        function addLanguage() {
+            const languagesContainer = document.getElementById('languagesContainer');
+            const newLang = document.createElement('div');
+            newLang.className = 'dynamic-item';
+            newLang.innerHTML = `
+                <div class="dynamic-item-header">
+                    <h4 style="color: var(--accent-color);">لغة جديدة</h4>
+                    <button class="delete-btn" onclick="this.parentElement.parentElement.remove(); updatePreview();">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control language-name" value="لغة جديدة" placeholder="اللغة">
+                </div>
+                <div class="form-group">
+                    <label>مستوى الإتقان:</label>
+                    <select class="form-control language-level">
+                        <option value="20">مبتدئ (20%)</option>
+                        <option value="40">متوسط (40%)</option>
+                        <option value="60">جيد (60%)</option>
+                        <option value="80">ممتاز (80%)</option>
+                        <option value="100">متمكن (100%)</option>
+                    </select>
+                </div>
+            `;
+            languagesContainer.appendChild(newLang);
+            updatePreview();
+        }
+
+        // حفظ البيانات
+        function saveData() {
+            cvData = {
+                personalInfo: {
+                    fullName: document.getElementById('fullName').value,
+                    jobTitle: document.getElementById('jobTitle').value,
+                    about: document.getElementById('about').value,
+                    phone: document.getElementById('phone').value,
+                    email: document.getElementById('email').value,
+                    address: document.getElementById('address').value,
+                    image: document.getElementById('imagePreview').src
+                },
+                settings: {
+                    template: currentTemplate,
+                    imagePosition: imagePosition,
+                    imageShape: imageShape
+                }
+            };
+            
+            // حفظ في localStorage
+            localStorage.setItem('cvProData', JSON.stringify(cvData));
+            
+            // عرض إشعار
+            showAlert('تم حفظ التغييرات بنجاح!');
+        }
+
+        // تحميل البيانات المحفوظة
+        function loadSavedData() {
+            const savedData = localStorage.getItem('cvProData');
+            if (savedData) {
+                cvData = JSON.parse(savedData);
+                
+                // تعبئة البيانات الشخصية
+                if (cvData.personalInfo) {
+                    document.getElementById('fullName').value = cvData.personalInfo.fullName || '';
+                    document.getElementById('jobTitle').value = cvData.personalInfo.jobTitle || '';
+                    document.getElementById('about').value = cvData.personalInfo.about || '';
+                    document.getElementById('phone').value = cvData.personalInfo.phone || '';
+                    document.getElementById('email').value = cvData.personalInfo.email || '';
+                    document.getElementById('address').value = cvData.personalInfo.address || '';
+                    
+                    if (cvData.personalInfo.image) {
+                        document.getElementById('imagePreview').src = cvData.personalInfo.image;
+                    }
+                }
+                
+                // تعيين الإعدادات
+                if (cvData.settings) {
+                    currentTemplate = cvData.settings.template || '1';
+                    imagePosition = cvData.settings.imagePosition || 'right';
+                    imageShape = cvData.settings.imageShape || 'circle';
+                    
+                    // تحديث واجهة المستخدم
+                    document.querySelectorAll('.template').forEach(t => t.classList.remove('active'));
+                    document.querySelector(`.template[data-template="${currentTemplate}"]`).classList.add('active');
+                    
+                    document.querySelectorAll('.image-option').forEach(option => {
+                        option.classList.remove('active');
+                        const optionType = option.getAttribute('data-option');
+                        const value = option.getAttribute('data-value');
+                        
+                        if (optionType === 'position' && value === imagePosition) {
+                            option.classList.add('active');
+                        } else if (optionType === 'shape' && value === imageShape) {
+                            option.classList.add('active');
+                        }
+                    });
+                    
+                    document.getElementById('imageContainer').className = `image-preview-container shape-${imageShape}`;
+                }
+            }
+        }
+
+        // تصدير إلى PDF
+        function exportToPDF() {
+            const previewContainer = document.querySelector('.cv-preview-container');
+            
+            // استخدام html2canvas لالتقاط لقطة
+            html2canvas(previewContainer, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                backgroundColor: null,
+                width: 210 * 3.78, // تحويل mm إلى pixel (1mm = 3.78px)
+                height: 297 * 3.78
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jspdf.jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // حساب الأبعاد لتناسب صفحة A4
+                const imgWidth = 210; // عرض A4 بالملليمتر
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                // إضافة الصورة إلى PDF (صفحة واحدة فقط)
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                
+                // حفظ الملف
+                pdf.save('السيرة_الذاتية_A4.pdf');
+                
+                showAlert('تم تصدير PDF بصفحة واحدة بنجاح!');
+            }).catch(error => {
+                console.error('خطأ في تصدير PDF:', error);
+                showAlert('حدث خطأ في التصدير، حاول مرة أخرى');
+            });
+        }
+
+        // تصدير إلى Word
+        function exportToWord() {
+            const preview = document.getElementById('cvPreview');
+            const content = preview.innerHTML;
+            
+            // إنشاء محتوى HTML لملف Word
+            const header = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='UTF-8'>
+                    <title>السيرة الذاتية - صفحة واحدة</title>
+                    <style>
+                        @page {
+                            size: A4;
+                            margin: 25mm;
+                        }
+                        body { 
+                            font-family: 'Cairo', 'Tajawal', sans-serif; 
+                            direction: rtl; 
+                            text-align: right; 
+                            width: 210mm;
+                            height: 297mm;
+                            padding: 25mm;
+                            margin: 0;
+                            font-size: 12pt;
+                            line-height: 1.5;
+                        }
+                        .cv-header { display: flex; align-items: flex-start; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 3px solid #3498db; }
+                        .profile-img { width: 140px; height: 140px; object-fit: cover; border-radius: 50%; margin: 0 20px; }
+                        .contact-items { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 10px; font-size: 10pt; }
+                        .cv-sections-container { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+                        .cv-section { margin-bottom: 22px; }
+                        .skill-bar { height: 10px; background: #eee; border-radius: 5px; margin: 5px 0; overflow: hidden; }
+                        .skill-level { height: 100%; background: linear-gradient(90deg, #3498db, #e74c3c); border-radius: 5px; }
+                    </style>
+                </head>
+                <body>
+            `;
+            
+            const footer = "</body></html>";
+            const htmlContent = header + content + footer;
+            
+            // إنشاء blob وربطه برابط تحميل
+            const blob = new Blob(['\ufeff', htmlContent], {
+                type: 'application/msword'
+            });
+            
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'السيرة_الذاتية_A4.doc';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('تم تصدير Word بصفحة واحدة بنجاح!');
+        }
+
+        // طباعة
+        function printCV() {
+            const printContent = document.getElementById('cvPreview').innerHTML;
+            const originalContent = document.body.innerHTML;
+            
+            // إنشاء نافذة طباعة
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html dir="rtl">
+                <head>
+                    <title>طباعة السيرة الذاتية</title>
+                    <style>
+                        @media print {
+                            @page {
+                                size: A4;
+                                margin: 25mm;
+                            }
+                            body {
+                                font-family: 'Cairo', 'Tajawal', sans-serif;
+                                width: 210mm;
+                                height: 297mm;
+                                padding: 25mm;
+                                margin: 0;
+                                font-size: 12pt;
+                                line-height: 1.5;
+                            }
+                        }
+                        body {
+                            font-family: 'Cairo', 'Tajawal', sans-serif;
+                            padding: 25mm;
+                            margin: 0;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${printContent}
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            setTimeout(function() {
+                                window.close();
+                            }, 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // تبديل الوضع الداكن
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark-mode', isDarkMode);
+            document.getElementById('themeToggle').innerHTML = isDarkMode ? 
+                '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+        }
+
+        // عرض إشعار
+        function showAlert(message) {
+            const alert = document.getElementById('alert');
+            alert.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            alert.classList.add('show');
+            
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
 
