@@ -3,1308 +3,1844 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV AI Arabic - مولد السيرة الذاتية</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>CV Builder - Dali AI</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #6366f1;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Cairo', 'Tajawal', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --success-color: #27ae60;
-            --text-color: #333;
-            --bg-color: #f8f9fa;
-            --card-bg: #fff;
-            --shadow: rgba(0, 0, 0, 0.1);
-        }
-
-        .dark-mode {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --light-color: #34495e;
-            --dark-color: #ecf0f1;
-            --success-color: #2ecc71;
-            --text-color: #ecf0f1;
-            --bg-color: #1a252f;
-            --card-bg: #2c3e50;
-            --shadow: rgba(0, 0, 0, 0.3);
-        }
-
+        
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: all 0.3s ease;
+            background-color: #f5f7fa;
+            color: #333;
             line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
         }
-
+        
         .container {
             max-width: 1200px;
             margin: 0 auto;
+        }
+        
+        /* شاشة الحماية */
+        .protection-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+            color: white;
+            text-align: center;
             padding: 20px;
         }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--primary-color);
+        
+        .protection-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 400px;
+            width: 100%;
         }
-
-        .logo {
+        
+        .password-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        .password-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+        
+        .protection-form button {
+            width: 100%;
+            padding: 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .protection-form button:hover {
+            background: #059669;
+        }
+        
+        .error-message {
+            color: #fef3c7;
+            background: rgba(220, 38, 38, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+        
+        /* شريط اللغة */
+        .app-language-bar {
             display: flex;
-            align-items: center;
+            justify-content: flex-end;
+            margin-bottom: 15px;
             gap: 10px;
         }
-
-        .logo h1 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-        }
-
-        .logo i {
-            color: var(--accent-color);
-            font-size: 2rem;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .lang-selector select {
-            padding: 8px 12px;
-            border-radius: 5px;
-            border: 1px solid var(--primary-color);
-            background-color: var(--card-bg);
-            color: var(--text-color);
-        }
-
-        .theme-toggle {
-            background: none;
+        
+        .app-lang-btn {
+            padding: 8px 15px;
+            background: var(--primary);
+            color: white;
             border: none;
-            font-size: 1.5rem;
-            color: var(--primary-color);
+            border-radius: 5px;
             cursor: pointer;
+            transition: background 0.3s;
         }
-
+        
+        .app-lang-btn.active {
+            background: var(--secondary);
+            font-weight: bold;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
         .app-container {
             display: grid;
-            grid-template-columns: 1fr 2fr;
+            grid-template-columns: 1fr 1fr;
             gap: 30px;
         }
-
+        
         @media (max-width: 992px) {
             .app-container {
                 grid-template-columns: 1fr;
             }
         }
-
-        .sidebar {
-            background-color: var(--card-bg);
+        
+        .form-section {
+            background: white;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 5px 15px var(--shadow);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
-
-        .main-content {
-            background-color: var(--card-bg);
+        
+        .preview-section {
+            background: white;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 5px 15px var(--shadow);
-            overflow: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
         }
-
+        
         .section-title {
-            color: var(--primary-color);
+            font-size: 1.5rem;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 2px solid var(--secondary-color);
-            font-size: 1.4rem;
+            border-bottom: 2px solid var(--primary);
+            color: var(--dark);
         }
-
+        
         .form-group {
             margin-bottom: 20px;
         }
-
-        .form-group label {
+        
+        label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--text-color);
+            color: var(--dark);
         }
-
-        .form-control {
+        
+        input, textarea, select {
             width: 100%;
             padding: 12px;
-            border-radius: 5px;
             border: 1px solid #ddd;
-            background-color: var(--card-bg);
-            color: var(--text-color);
+            border-radius: 6px;
             font-size: 1rem;
+            transition: border 0.3s;
         }
-
-        .form-control:focus {
+        
+        input:focus, textarea:focus, select:focus {
             outline: none;
-            border-color: var(--secondary-color);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
-
-        .image-upload {
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s;
             text-align: center;
-            margin: 20px 0;
         }
-
+        
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .templates-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .templates-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .template-option {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .template-option:hover {
+            border-color: var(--primary);
+        }
+        
+        .template-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+        
+        .template-preview {
+            height: 120px;
+            background: #f3f4f6;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #6b7280;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .template-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .cv-preview {
+            flex: 1;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 25px;
+            min-height: 500px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .cv-a4 {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20mm;
+            position: relative;
+            transform-origin: top center;
+            transform: scale(0.8);
+        }
+        
+        @media (max-width: 1200px) {
+            .cv-a4 {
+                transform: scale(0.7);
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .cv-a4 {
+                transform: scale(0.6);
+            }
+        }
+        
+        /* إطارات القوالب */
+        .frame-classic {
+            border: 15px solid #1e40af;
+            border-top: 40px solid #1e40af;
+        }
+        
+        .frame-modern {
+            border: 2px solid #10b981;
+            box-shadow: 0 0 0 10px #d1fae5, 0 0 0 12px #10b981;
+        }
+        
+        .frame-professional {
+            border-left: 15px solid #7c3aed;
+            border-top: 2px solid #e5e7eb;
+            border-right: 2px solid #e5e7eb;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .frame-elegant {
+            border: 1px solid #d1d5db;
+            background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+            box-shadow: inset 0 0 0 1px white, 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .frame-creative {
+            background: white;
+            border: 2px dashed #f59e0b;
+            position: relative;
+        }
+        
+        .frame-creative::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid #f59e0b;
+            pointer-events: none;
+        }
+        
+        .frame-minimal {
+            border: 2px solid #6b7280;
+            background: white;
+        }
+        
+        .frame-bold {
+            border: 5px solid #dc2626;
+            background: white;
+        }
+        
+        .frame-gradient {
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #3b82f6, #8b5cf6) border-box;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .color-option.selected {
+            border-color: #333;
+        }
+        
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+        }
+        
         .image-preview {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--secondary-color);
-            margin: 0 auto 15px;
-            display: block;
-        }
-
-        .image-position {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .pos-btn {
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: 1px solid var(--primary-color);
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .pos-btn.active {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .templates {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .template {
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .template:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px var(--shadow);
-        }
-
-        .template.active {
-            border-color: var(--accent-color);
-        }
-
-        .template-preview {
-            height: 120px;
-            background-size: cover;
-            background-position: center;
-        }
-
-        .template-name {
-            padding: 10px;
-            text-align: center;
-            background-color: var(--bg-color);
-            font-weight: 600;
-        }
-
-        .btn-group {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 25px;
-            border-radius: 5px;
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
+            background: #f3f4f6;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            transition: all 0.3s;
-            flex: 1;
-            min-width: 150px;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: var(--secondary-color);
-            color: white;
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-accent {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .cv-preview {
-            min-height: 800px;
-            background-color: white;
-            border-radius: 5px;
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .template1 {
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .template1 .cv-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #2c3e50;
-        }
-
-        .template1 .name-title h1 {
-            color: #2c3e50;
-            font-size: 2.5rem;
-            margin-bottom: 5px;
-        }
-
-        .template1 .name-title h2 {
-            color: #3498db;
-            font-size: 1.5rem;
-            font-weight: 400;
-        }
-
-        .template1 .contact-info {
-            text-align: left;
-        }
-
-        .template1 .contact-info p {
-            margin-bottom: 5px;
-            color: #555;
-        }
-
-        .template1 .section {
-            margin-bottom: 25px;
-        }
-
-        .template1 .section h3 {
-            color: #2c3e50;
-            font-size: 1.3rem;
             margin-bottom: 15px;
-            padding-bottom: 5px;
-            border-bottom: 1px solid #ddd;
+            overflow: hidden;
+            border: 2px dashed #d1d5db;
         }
-
-        .template1 .job {
-            margin-bottom: 20px;
-        }
-
-        .template1 .job-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
-        .template1 .company {
-            font-weight: 700;
-            color: #2c3e50;
-        }
-
-        .template1 .date {
-            color: #3498db;
-            font-weight: 500;
-        }
-
-        .template1 .position {
-            font-style: italic;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .template1 .skills-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .template1 .skill-item {
-            background-color: #3498db;
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        /* تنسيقات للقوالب الأخرى */
-        .template2 {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(to right, #f8f9fa 30%, white 30%);
-        }
-
-        .template3 {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f9f9f9;
-            border-left: 5px solid #e74c3c;
-        }
-
-        .template4 {
-            font-family: 'Tajawal', sans-serif;
-            background-color: white;
-        }
-
-        .template5 {
-            font-family: 'Cairo', sans-serif;
-            background-color: #f0f8ff;
-            border: 2px solid #2c3e50;
-        }
-
-        .template6 {
-            font-family: 'Tajawal', sans-serif;
-            background-color: #fffaf0;
-        }
-
-        .template7 {
-            font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .template7 * {
-            color: white;
-        }
-
-        .template7 .section h3 {
-            border-bottom-color: rgba(255,255,255,0.3);
-        }
-
-        .image-left .cv-header {
-            flex-direction: row-reverse;
-        }
-
-        .image-center .cv-header {
-            flex-direction: column;
-            text-align: center;
-        }
-
-        .image-center .profile-img {
-            margin: 0 auto 20px;
-        }
-
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
-            border: 3px solid var(--secondary-color);
         }
-
+        
         .hidden {
             display: none;
         }
-
-        footer {
-            margin-top: 40px;
-            text-align: center;
-            padding: 20px;
-            color: var(--text-color);
-            border-top: 1px solid var(--shadow);
-        }
-
-        .alert {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background-color: var(--success-color);
+        
+        /* أنماط القوالب */
+        .template-classic .header {
+            background: #1e40af;
             color: white;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px var(--shadow);
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s;
+            padding: 30px;
+            text-align: center;
+            margin: -20mm -20mm 30px -20mm;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .template-classic .profile-img {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .template-modern .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 3px solid #10b981;
+            margin-bottom: 30px;
+        }
+        
+        .template-modern .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #10b981;
+        }
+        
+        .template-professional .header {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        
+        .template-professional .profile-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #7c3aed;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            justify-self: center;
+        }
+        
+        .template-elegant .header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .template-elegant .profile-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+            border: 4px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .template-creative .header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #fef3c7, #f59e0b);
+            border-radius: 10px;
+        }
+        
+        .template-creative .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .template-minimal .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .template-minimal .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid #6b7280;
+        }
+        
+        .template-bold .header {
+            background: #dc2626;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            margin: -20mm -20mm 30px -20mm;
+        }
+        
+        .template-bold .profile-img {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            margin-bottom: 15px;
+        }
+        
+        .template-gradient .header {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin: -20mm -20mm 30px -20mm;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .template-gradient .profile-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .skills-list, .hobbies-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .skill-tag, .hobby-tag {
+            background: #e5e7eb;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .section {
+            margin-bottom: 20px;
+        }
+        
+        .section-title-cv {
+            font-size: 1.3rem;
+            color: #1e40af;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        /* تحسينات الوضع الداكن */
+        .dark-mode {
+            background-color: #1f2937 !important;
+            color: #f9fafb !important;
+        }
+        
+        .dark-mode .section-title-cv {
+            color: #60a5fa !important;
+            border-bottom-color: #4b5563 !important;
+        }
+        
+        .dark-mode .skill-tag, .dark-mode .hobby-tag {
+            background: #374151 !important;
+            color: #f9fafb !important;
+        }
+        
+        .dark-mode .personal-info p {
+            color: #f9fafb !important;
+        }
+        
+        .dark-mode .personal-info strong {
+            color: #d1d5db !important;
+        }
+        
+        .dark-mode .cv-content {
+            color: #f9fafb !important;
+        }
+        
+        .dark-mode .cv-content p {
+            color: #f9fafb !important;
+        }
+        
+        .dark-mode .template-classic .header,
+        .dark-mode .template-bold .header,
+        .dark-mode .template-gradient .header {
+            background-color: #1e40af;
+        }
+        
+        .dark-mode .template-creative .header {
+            background: linear-gradient(135deg, #92400e, #d97706);
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .print-only {
+            display: none;
+        }
+        
+        /* تحسينات لمحتوى السيرة الذاتية */
+        .cv-content {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .personal-info p {
+            margin-bottom: 5px;
+        }
+        
+        /* تعديلات موضع الصورة */
+        .image-right {
+            order: -1;
+        }
+        
+        .image-left {
+            order: 1;
+        }
+        
+        .image-center {
+            order: 0;
+        }
+        
+        .header-content {
+            flex: 1;
+        }
+        
+        /* تنسيقات الطباعة */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .cv-a4, .cv-a4 * {
+                visibility: visible;
+            }
+            .cv-a4 {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 210mm !important;
+                height: 297mm !important;
+                box-shadow: none;
+                padding: 15mm !important;
+                transform: scale(1) !important;
+                margin: 0 !important;
+            }
+            .no-print {
+                display: none;
+            }
+            .print-only {
+                display: block;
+            }
         }
 
-        .alert.show {
-            opacity: 1;
+        /* تحسينات للغة */
+        body[dir="rtl"] {
+            text-align: right;
+        }
+        
+        body[dir="ltr"] {
+            text-align: left;
+        }
+        
+        body[dir="ltr"] .section-title {
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        body[dir="ltr"] .section-title-cv {
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        /* إعدادات الصورة في القوالب */
+        .image-position {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .position-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+        }
+        
+        .position-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* تنظيم المحتوى ليكون في صفحة واحدة */
+        .single-page {
+            max-height: 297mm;
+            overflow: hidden;
+        }
+        
+        .compact-section {
+            margin-bottom: 15px;
+        }
+        
+        .compact-section .section-title-cv {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        
+        /* تنسيقات خاصة لكل قالب */
+        .template-professional .header-content {
+            text-align: left;
+        }
+        
+        body[dir="rtl"] .template-professional .header-content {
+            text-align: right;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-file-alt"></i>
-                <h1>CV AI Arabic</h1>
+    <!-- شاشة الحماية -->
+    <div class="protection-screen" id="protectionScreen">
+        <div class="protection-form">
+            <h2 id="protectionTitle">الوصول إلى تطبيق Dali AI</h2>
+            <p id="protectionText">أدخل كود التفعيل للوصول إلى التطبيق</p>
+            <div class="password-container">
+                <input type="text" id="accessCode" placeholder="أدخل كود التفعيل">
             </div>
-            <div class="controls">
-                <div class="lang-selector">
-                    <select id="language">
-                        <option value="ar">العربية</option>
-                        <option value="fr">Français</option>
-                        <option value="en">English</option>
-                    </select>
-                </div>
-                <button class="theme-toggle" id="themeToggle">
-                    <i class="fas fa-moon"></i>
-                </button>
-            </div>
-        </header>
+            <button id="unlockBtn">فتح التطبيق</button>
+            <div class="error-message" id="errorMessage">كود التفعيل غير صحيح. حاول مرة أخرى.</div>
+        </div>
+    </div>
 
+    <!-- التطبيق الرئيسي (مخفي في البداية) -->
+    <div class="container" id="mainApp" style="display: none;">
+        <div class="app-language-bar no-print">
+            <button class="app-lang-btn active" data-lang="ar">العربية</button>
+            <button class="app-lang-btn" data-lang="fr">Français</button>
+            <button class="app-lang-btn" data-lang="en">English</button>
+        </div>
+        
+        <header>
+            <h1 id="appTitle">منشئ السيرة الذاتية - Dali AI</h1>
+            <p id="appSubtitle">أنشئ سيرتك الذاتية الاحترافية بسهولة وقم بتنزيلها بصيغة PDF</p>
+        </header>
+        
+        <div class="alert alert-success" id="successAlert">
+            تم حفظ السيرة الذاتية بنجاح! يمكنك الآن تحميلها بصيغة PDF.
+        </div>
+        
         <div class="app-container">
-            <div class="sidebar">
-                <h3 class="section-title">البيانات الشخصية</h3>
+            <div class="form-section">
+                <h2 class="section-title" id="settingsTitle">إعدادات السيرة الذاتية</h2>
                 
                 <div class="form-group">
-                    <label for="fullName">الاسم الكامل</label>
-                    <input type="text" id="fullName" class="form-control" placeholder="أدخل اسمك الكامل">
+                    <label id="templateLabel">اختر قالب السيرة الذاتية</label>
+                    <div class="templates-container">
+                        <div class="template-option selected" data-template="classic">
+                            <div class="template-preview">
+                                <div class="template-frame frame-classic"></div>
+                                <span id="classicTemplate">كلاسيكي</span>
+                            </div>
+                            <span id="classicLabel">كلاسيكي</span>
+                        </div>
+                        <div class="template-option" data-template="modern">
+                            <div class="template-preview">
+                                <div class="template-frame frame-modern"></div>
+                                <span id="modernTemplate">عصري</span>
+                            </div>
+                            <span id="modernLabel">عصري</span>
+                        </div>
+                        <div class="template-option" data-template="professional">
+                            <div class="template-preview">
+                                <div class="template-frame frame-professional"></div>
+                                <span id="professionalTemplate">احترافي</span>
+                            </div>
+                            <span id="professionalLabel">احترافي</span>
+                        </div>
+                        <div class="template-option" data-template="elegant">
+                            <div class="template-preview">
+                                <div class="template-frame frame-elegant"></div>
+                                <span id="elegantTemplate">أنيق</span>
+                            </div>
+                            <span id="elegantLabel">أنيق</span>
+                        </div>
+                        <div class="template-option" data-template="creative">
+                            <div class="template-preview">
+                                <div class="template-frame frame-creative"></div>
+                                <span id="creativeTemplate">إبداعي</span>
+                            </div>
+                            <span id="creativeLabel">إبداعي</span>
+                        </div>
+                        <div class="template-option" data-template="minimal">
+                            <div class="template-preview">
+                                <div class="template-frame frame-minimal"></div>
+                                <span id="minimalTemplate">بسيط</span>
+                            </div>
+                            <span id="minimalLabel">بسيط</span>
+                        </div>
+                        <div class="template-option" data-template="bold">
+                            <div class="template-preview">
+                                <div class="template-frame frame-bold"></div>
+                                <span id="boldTemplate">جريء</span>
+                            </div>
+                            <span id="boldLabel">جريء</span>
+                        </div>
+                        <div class="template-option" data-template="gradient">
+                            <div class="template-preview">
+                                <div class="template-frame frame-gradient"></div>
+                                <span id="gradientTemplate">متدرج</span>
+                            </div>
+                            <span id="gradientLabel">متدرج</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="jobTitle">المسمى الوظيفي</label>
-                    <input type="text" id="jobTitle" class="form-control" placeholder="مثال: مصمم جرافيك">
+                    <label id="colorLabel">اختر لون السيرة الذاتية</label>
+                    <div class="color-options">
+                        <div class="color-option selected" style="background-color: #1e40af;" data-color="#1e40af"></div>
+                        <div class="color-option" style="background-color: #059669;" data-color="#059669"></div>
+                        <div class="color-option" style="background-color: #7c3aed;" data-color="#7c3aed"></div>
+                        <div class="color-option" style="background-color: #dc2626;" data-color="#dc2626"></div>
+                        <div class="color-option" style="background-color: #d97706;" data-color="#d97706"></div>
+                        <div class="color-option" style="background-color: #6b7280;" data-color="#6b7280"></div>
+                    </div>
                 </div>
                 
-                <div class="image-upload">
-                    <img id="imagePreview" src="https://via.placeholder.com/150/2c3e50/ffffff?text=صورة" alt="صورة شخصية" class="image-preview">
-                    <input type="file" id="imageUpload" accept="image/*" class="form-control" style="display: none;">
-                    <button onclick="document.getElementById('imageUpload').click()" class="btn btn-secondary" style="margin-top: 10px;">
-                        <i class="fas fa-upload"></i> رفع صورة
-                    </button>
+                <div class="form-group">
+                    <label id="photoLabel">رفع الصورة الشخصية</label>
+                    <div class="image-upload">
+                        <div class="image-preview" id="imagePreview">
+                            <span id="photoText">صورة الشخصية</span>
+                        </div>
+                        <input type="file" id="imageUpload" accept="image/*" class="hidden">
+                        <button type="button" class="btn btn-secondary" id="uploadButton">رفع صورة</button>
+                    </div>
                     
+                    <label id="positionLabel">موضع الصورة في السيرة الذاتية</label>
                     <div class="image-position">
-                        <label>موقع الصورة:</label>
-                        <button class="pos-btn active" data-pos="right">يمين</button>
-                        <button class="pos-btn" data-pos="center">وسط</button>
-                        <button class="pos-btn" data-pos="left">يسار</button>
+                        <button class="position-btn active" data-position="right">⭕ اليمين</button>
+                        <button class="position-btn" data-position="center">⭕ الوسط</button>
+                        <button class="position-btn" data-position="left">⭕ اليسار</button>
                     </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="about">نبذة عني</label>
-                    <textarea id="about" class="form-control" rows="4" placeholder="أكتب نبذة مختصرة عنك..."></textarea>
-                </div>
+                <h2 class="section-title" id="personalInfoTitle">المعلومات الشخصية</h2>
                 
                 <div class="form-group">
-                    <label for="phone">رقم الهاتف</label>
-                    <input type="text" id="phone" class="form-control" placeholder="+123-456-7890">
+                    <label for="fullName" id="nameLabel">الاسم الكامل</label>
+                    <input type="text" id="fullName" placeholder="أدخل اسمك الكامل">
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">البريد الإلكتروني</label>
-                    <input type="email" id="email" class="form-control" placeholder="hello@example.com">
+                    <label for="jobTitle" id="jobTitleLabel">المسمى الوظيفي</label>
+                    <input type="text" id="jobTitle" placeholder="المسمى الوظيفي">
                 </div>
                 
                 <div class="form-group">
-                    <label for="address">العنوان</label>
-                    <input type="text" id="address" class="form-control" placeholder="المدينة، الدولة">
+                    <label for="birthDate" id="birthDateLabel">تاريخ الميلاد</label>
+                    <input type="date" id="birthDate">
                 </div>
                 
-                <h3 class="section-title" style="margin-top: 30px;">الخبرات العملية</h3>
-                <div id="experiences">
-                    <div class="experience-item">
-                        <input type="text" class="form-control" placeholder="اسم الشركة" style="margin-bottom: 10px;">
-                        <input type="text" class="form-control" placeholder="المسمى الوظيفي" style="margin-bottom: 10px;">
-                        <input type="text" class="form-control" placeholder="الفترة (مثال: 2020 - 2022)" style="margin-bottom: 10px;">
-                        <textarea class="form-control" placeholder="المسؤوليات والإنجازات" rows="3"></textarea>
-                        <button class="btn btn-accent" onclick="removeExperience(this)" style="margin-top: 10px; padding: 8px 15px;">
-                            <i class="fas fa-trash"></i> حذف
-                        </button>
-                    </div>
-                </div>
-                <button class="btn btn-secondary" onclick="addExperience()" style="margin-top: 15px; width: 100%;">
-                    <i class="fas fa-plus"></i> إضافة خبرة جديدة
-                </button>
-                
-                <h3 class="section-title" style="margin-top: 30px;">التعليم</h3>
-                <div id="educations">
-                    <div class="education-item">
-                        <input type="text" class="form-control" placeholder="اسم المؤسسة التعليمية" style="margin-bottom: 10px;">
-                        <input type="text" class="form-control" placeholder="التخصص/الشهادة" style="margin-bottom: 10px;">
-                        <input type="text" class="form-control" placeholder="الفترة (مثال: 2014 - 2018)" style="margin-bottom: 10px;">
-                        <button class="btn btn-accent" onclick="removeEducation(this)" style="margin-top: 10px; padding: 8px 15px;">
-                            <i class="fas fa-trash"></i> حذف
-                        </button>
-                    </div>
-                </div>
-                <button class="btn btn-secondary" onclick="addEducation()" style="margin-top: 15px; width: 100%;">
-                    <i class="fas fa-plus"></i> إضافة تعليم جديد
-                </button>
-                
-                <h3 class="section-title" style="margin-top: 30px;">المهارات</h3>
                 <div class="form-group">
-                    <textarea id="skills" class="form-control" rows="4" placeholder="أدخل مهاراتك مفصولة بفواصل (مثال: التصميم، الإدارة، التسويق)"></textarea>
+                    <label for="height" id="heightLabel">الطول</label>
+                    <input type="text" id="height" placeholder="الطول بالسنتيمتر">
                 </div>
                 
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="previewBtn">
-                        <i class="fas fa-eye"></i> معاينة
-                    </button>
-                    <button class="btn btn-success" id="saveBtn">
-                        <i class="fas fa-save"></i> حفظ التغييرات
-                    </button>
+                <div class="form-group">
+                    <label for="phone" id="phoneLabel">رقم الهاتف</label>
+                    <input type="tel" id="phone" placeholder="رقم الهاتف">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" id="emailLabel">البريد الإلكتروني</label>
+                    <input type="email" id="email" placeholder="البريد الإلكتروني">
+                </div>
+                
+                <h2 class="section-title" id="educationTitle">المؤهلات العلمية</h2>
+                
+                <div class="form-group">
+                    <label for="education" id="educationLabel">الشهادات العلمية (اكتب كل شهادة في سطر)</label>
+                    <textarea id="education" rows="3" placeholder="مثال: بكالوريوس في علوم الحاسوب - جامعة القاهرة - 2020"></textarea>
+                </div>
+                
+                <h2 class="section-title" id="experienceTitle">الخبرات المهنية</h2>
+                
+                <div class="form-group">
+                    <label for="experience" id="experienceLabel">الخبرات العملية (اكتب كل خبرة في سطر)</label>
+                    <textarea id="experience" rows="3" placeholder="مثال: مطور ويب - شركة التقنية - 2021-2023"></textarea>
+                </div>
+                
+                <h2 class="section-title" id="skillsTitle">المهارات</h2>
+                
+                <div class="form-group">
+                    <label for="skills" id="skillsLabel">المهارات (افصل بينها بفاصلة)</label>
+                    <input type="text" id="skills" placeholder="مثال: القيادة، الاتصال، البرمجة">
+                </div>
+                
+                <h2 class="section-title" id="hobbiesTitle">الهوايات</h2>
+                
+                <div class="form-group">
+                    <label for="hobbies" id="hobbiesLabel">الهوايات (افصل بينها بفاصلة)</label>
+                    <input type="text" id="hobbies" placeholder="مثال: القراءة، السفر، الرياضة">
+                </div>
+                
+                <div class="actions">
+                    <button class="btn btn-success" id="saveBtn">حفظ التغييرات</button>
+                    <button class="btn btn-secondary" id="resetBtn">إعادة تعيين</button>
+                    <button class="btn" id="darkModeBtn">الوضع الداكن</button>
                 </div>
             </div>
             
-            <div class="main-content">
-                <h3 class="section-title">القوالب المتاحة</h3>
-                <div class="templates">
-                    <div class="template active" data-template="1">
-                        <div class="template-preview" style="background: linear-gradient(to right, #2c3e50, #3498db);"></div>
-                        <div class="template-name">التصميم الكلاسيكي</div>
-                    </div>
-                    <div class="template" data-template="2">
-                        <div class="template-preview" style="background: linear-gradient(to right, #f8f9fa, white);"></div>
-                        <div class="template-name">العمودي الحديث</div>
-                    </div>
-                    <div class="template" data-template="3">
-                        <div class="template-preview" style="background: linear-gradient(to right, #f9f9f9, white); border-left: 5px solid #e74c3c;"></div>
-                        <div class="template-name">البسيط المميز</div>
-                    </div>
-                    <div class="template" data-template="4">
-                        <div class="template-preview" style="background: linear-gradient(45deg, #ff9a9e, #fad0c4);"></div>
-                        <div class="template-name">التسويق الإبداعي</div>
-                    </div>
-                    <div class="template" data-template="5">
-                        <div class="template-preview" style="background: linear-gradient(to right, #f0f8ff, white); border: 2px solid #2c3e50;"></div>
-                        <div class="template-name">العربي التقليدي</div>
-                    </div>
-                    <div class="template" data-template="6">
-                        <div class="template-preview" style="background: linear-gradient(to right, #fffaf0, white);"></div>
-                        <div class="template-name">الفرنسي الأنيق</div>
-                    </div>
-                    <div class="template" data-template="7">
-                        <div class="template-preview" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
-                        <div class="template-name">المبدع للمصممين</div>
-                    </div>
-                </div>
+            <div class="preview-section">
+                <h2 class="section-title" id="previewTitle">معاينة السيرة الذاتية</h2>
                 
-                <h3 class="section-title" style="margin-top: 30px;">معاينة السيرة الذاتية</h3>
-                <div id="cvPreview" class="cv-preview template1">
-                    <!-- سيتم ملؤها بالجافاسكريبت -->
-                    <div class="cv-header">
-                        <div class="name-title">
-                            <h1>ريتشارد سانشيز</h1>
-                            <h2>مصمم منتجات</h2>
-                        </div>
-                        <div class="contact-info">
-                            <p>+123-456-7890</p>
-                            <p>hello@example.com</p>
-                            <p>سيدني، أستراليا</p>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3>نبذة عني</h3>
-                        <p>مصمم منتجات مبدع مع خبرة في تصميم الواجهات والتجارب الرقمية. أتمتع بمهارات قوية في البحث عن المستخدمين وحل المشكلات الإبداعية.</p>
-                    </div>
-                    
-                    <div class="section">
-                        <h3>الخبرات العملية</h3>
-                        <div class="job">
-                            <div class="job-header">
-                                <div class="company">Arrowal Industries</div>
-                                <div class="date">2020 - 2022</div>
+                <div class="cv-preview">
+                    <div class="cv-a4 template-classic frame-classic single-page" id="cvPreview">
+                        <div class="cv-content">
+                            <div class="header">
+                                <div class="header-content">
+                                    <h1 id="previewName">الاسم الكامل</h1>
+                                    <p id="previewTitleText">المسمى الوظيفي</p>
+                                </div>
                             </div>
-                            <div class="position">مصمم منتجات أول</div>
-                            <p>قمت بتصميم وتطوير منتجات رقمية مبتكرة بالتعاون مع فرق التطوير والتسويق.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3>التعليم</h3>
-                        <div class="job">
-                            <div class="job-header">
-                                <div class="company">Borcelle University</div>
-                                <div class="date">2014 - 2018</div>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewPersonalTitle">المعلومات الشخصية</h3>
+                                <div class="personal-info">
+                                    <p><strong id="previewBirthLabel">تاريخ الميلاد:</strong> <span id="previewBirthDate">-</span></p>
+                                    <p><strong id="previewHeightLabel">الطول:</strong> <span id="previewHeight">-</span></p>
+                                    <p><strong id="previewPhoneLabel">الهاتف:</strong> <span id="previewPhone">-</span></p>
+                                    <p><strong id="previewEmailLabel">البريد الإلكتروني:</strong> <span id="previewEmail">-</span></p>
+                                </div>
                             </div>
-                            <div class="position">ماجستير في إدارة الأعمال</div>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3>المهارات</h3>
-                        <div class="skills-list">
-                            <div class="skill-item">التصميم</div>
-                            <div class="skill-item">إدارة المشاريع</div>
-                            <div class="skill-item">بحث المستخدم</div>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewEducationTitle">المؤهلات العلمية</h3>
+                                <div id="previewEducation">
+                                    <p id="noEducationText">لم يتم إضافة مؤهلات علمية بعد</p>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewExperienceTitle">الخبرات المهنية</h3>
+                                <div id="previewExperience">
+                                    <p id="noExperienceText">لم يتم إضافة خبرات مهنية بعد</p>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewSkillsTitle">المهارات</h3>
+                                <div class="skills-list" id="previewSkills">
+                                    <span class="skill-tag" id="noSkillsText">لم يتم إضافة مهارات بعد</span>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewHobbiesTitle">الهوايات</h3>
+                                <div class="hobbies-list" id="previewHobbies">
+                                    <span class="hobby-tag" id="noHobbiesText">لم يتم إضافة هوايات بعد</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="btn-group" style="margin-top: 30px;">
-                    <button class="btn btn-primary" id="exportPdf">
-                        <i class="fas fa-file-pdf"></i> تصدير PDF
-                    </button>
-                    <button class="btn btn-success" id="exportWord">
-                        <i class="fas fa-file-word"></i> تصدير Word
-                    </button>
-                    <button class="btn btn-accent" id="printBtn">
-                        <i class="fas fa-print"></i> طباعة
-                    </button>
+                <div class="actions">
+                    <button class="btn btn-success" id="downloadPdf">تحميل PDF (صفحة واحدة)</button>
+                    <button class="btn" id="downloadWord">تحميل Word</button>
+                    <button class="btn" id="printBtn">طباعة</button>
                 </div>
             </div>
         </div>
-        
-        <footer>
-            <p>CV AI Arabic &copy; 2023 - جميع الحقوق محفوظة | تطبيق مولد السير الذاتية الاحترافي</p>
-        </footer>
-    </div>
-
-    <div id="alert" class="alert">
-        <i class="fas fa-check-circle"></i> تم حفظ التغييرات بنجاح!
     </div>
 
     <script>
-        // البيانات الأساسية
-        let currentTemplate = '1';
-        let imagePosition = 'right';
-        let isDarkMode = false;
-        let cvData = {
-            personalInfo: {},
-            experiences: [],
-            educations: [],
-            skills: []
+        // نظام اللغات
+        const translations = {
+            ar: {
+                protectionTitle: "الوصول إلى تطبيق Dali AI",
+                protectionText: "أدخل كود التفعيل للوصول إلى التطبيق",
+                unlockBtn: "فتح التطبيق",
+                errorMessage: "كود التفعيل غير صحيح. حاول مرة أخرى.",
+                appTitle: "منشئ السيرة الذاتية - Dali AI",
+                appSubtitle: "أنشئ سيرتك الذاتية الاحترافية بسهولة وقم بتنزيلها بصيغة PDF",
+                settingsTitle: "إعدادات السيرة الذاتية",
+                templateLabel: "اختر قالب السيرة الذاتية",
+                classicTemplate: "كلاسيكي",
+                classicLabel: "كلاسيكي",
+                modernTemplate: "عصري",
+                modernLabel: "عصري",
+                professionalTemplate: "احترافي",
+                professionalLabel: "احترافي",
+                elegantTemplate: "أنيق",
+                elegantLabel: "أنيق",
+                creativeTemplate: "إبداعي",
+                creativeLabel: "إبداعي",
+                minimalTemplate: "بسيط",
+                minimalLabel: "بسيط",
+                boldTemplate: "جريء",
+                boldLabel: "جريء",
+                gradientTemplate: "متدرج",
+                gradientLabel: "متدرج",
+                colorLabel: "اختر لون السيرة الذاتية",
+                photoLabel: "رفع الصورة الشخصية",
+                photoText: "صورة الشخصية",
+                uploadButton: "رفع صورة",
+                positionLabel: "موضع الصورة في السيرة الذاتية",
+                personalInfoTitle: "المعلومات الشخصية",
+                nameLabel: "الاسم الكامل",
+                jobTitleLabel: "المسمى الوظيفي",
+                birthDateLabel: "تاريخ الميلاد",
+                heightLabel: "الطول",
+                phoneLabel: "رقم الهاتف",
+                emailLabel: "البريد الإلكتروني",
+                educationTitle: "المؤهلات العلمية",
+                educationLabel: "الشهادات العلمية (اكتب كل شهادة في سطر)",
+                experienceTitle: "الخبرات المهنية",
+                experienceLabel: "الخبرات العملية (اكتب كل خبرة في سطر)",
+                skillsTitle: "المهارات",
+                skillsLabel: "المهارات (افصل بينها بفاصلة)",
+                hobbiesTitle: "الهوايات",
+                hobbiesLabel: "الهوايات (افصل بينها بفاصلة)",
+                saveBtn: "حفظ التغييرات",
+                resetBtn: "إعادة تعيين",
+                darkModeBtn: "الوضع الداكن",
+                previewTitle: "معاينة السيرة الذاتية",
+                previewPersonalTitle: "المعلومات الشخصية",
+                previewBirthLabel: "تاريخ الميلاد:",
+                previewHeightLabel: "الطول:",
+                previewPhoneLabel: "الهاتف:",
+                previewEmailLabel: "البريد الإلكتروني:",
+                previewEducationTitle: "المؤهلات العلمية",
+                noEducationText: "لم يتم إضافة مؤهلات علمية بعد",
+                previewExperienceTitle: "الخبرات المهنية",
+                noExperienceText: "لم يتم إضافة خبرات مهنية بعد",
+                previewSkillsTitle: "المهارات",
+                noSkillsText: "لم يتم إضافة مهارات بعد",
+                previewHobbiesTitle: "الهوايات",
+                noHobbiesText: "لم يتم إضافة هوايات بعد",
+                downloadPdf: "تحميل PDF (صفحة واحدة)",
+                downloadWord: "تحميل Word",
+                printBtn: "طباعة",
+                successMessage: "تم حفظ السيرة الذاتية بنجاح! يمكنك الآن تحميلها بصيغة PDF.",
+                accessCodePlaceholder: "أدخل كود التفعيل",
+                namePlaceholder: "أدخل اسمك الكامل",
+                jobPlaceholder: "المسمى الوظيفي",
+                heightPlaceholder: "الطول بالسنتيمتر",
+                phonePlaceholder: "رقم الهاتف",
+                emailPlaceholder: "البريد الإلكتروني",
+                educationPlaceholder: "مثال: بكالوريوس في علوم الحاسوب - جامعة القاهرة - 2020",
+                experiencePlaceholder: "مثال: مطور ويب - شركة التقنية - 2021-2023",
+                skillsPlaceholder: "مثال: القيادة، الاتصال، البرمجة",
+                hobbiesPlaceholder: "مثال: القراءة، السفر، الرياضة"
+            },
+            fr: {
+                protectionTitle: "Accéder à l'application Dali AI",
+                protectionText: "Entrez le code d'activation pour accéder à l'application",
+                unlockBtn: "Ouvrir l'application",
+                errorMessage: "Code d'activation incorrect. Veuillez réessayer.",
+                appTitle: "Créateur de CV - Dali AI",
+                appSubtitle: "Créez votre CV professionnel facilement et téléchargez-le en PDF",
+                settingsTitle: "Paramètres du CV",
+                templateLabel: "Choisissez un modèle de CV",
+                classicTemplate: "Classique",
+                classicLabel: "Classique",
+                modernTemplate: "Moderne",
+                modernLabel: "Moderne",
+                professionalTemplate: "Professionnel",
+                professionalLabel: "Professionnel",
+                elegantTemplate: "Élégant",
+                elegantLabel: "Élégant",
+                creativeTemplate: "Créatif",
+                creativeLabel: "Créatif",
+                minimalTemplate: "Minimal",
+                minimalLabel: "Minimal",
+                boldTemplate: "Audacieux",
+                boldLabel: "Audacieux",
+                gradientTemplate: "Dégradé",
+                gradientLabel: "Dégradé",
+                colorLabel: "Choisissez la couleur du CV",
+                photoLabel: "Télécharger la photo",
+                photoText: "Photo de profil",
+                uploadButton: "Télécharger une photo",
+                positionLabel: "Position de la photo dans le CV",
+                personalInfoTitle: "Informations personnelles",
+                nameLabel: "Nom complet",
+                jobTitleLabel: "Titre professionnel",
+                birthDateLabel: "Date de naissance",
+                heightLabel: "Taille",
+                phoneLabel: "Numéro de téléphone",
+                emailLabel: "Adresse e-mail",
+                educationTitle: "Formation académique",
+                educationLabel: "Diplômes et certificats (un par ligne)",
+                experienceTitle: "Expérience professionnelle",
+                experienceLabel: "Expériences professionnelles (une par ligne)",
+                skillsTitle: "Compétences",
+                skillsLabel: "Compétences (séparées par des virgules)",
+                hobbiesTitle: "Loisirs",
+                hobbiesLabel: "Loisirs (séparés par des virgules)",
+                saveBtn: "Enregistrer les modifications",
+                resetBtn: "Réinitialiser",
+                darkModeBtn: "Mode sombre",
+                previewTitle: "Aperçu du CV",
+                previewPersonalTitle: "Informations personnelles",
+                previewBirthLabel: "Date de naissance:",
+                previewHeightLabel: "Taille:",
+                previewPhoneLabel: "Téléphone:",
+                previewEmailLabel: "E-mail:",
+                previewEducationTitle: "Formation académique",
+                noEducationText: "Aucune formation académique ajoutée",
+                previewExperienceTitle: "Expérience professionnelle",
+                noExperienceText: "Aucune expérience professionnelle ajoutée",
+                previewSkillsTitle: "Compétences",
+                noSkillsText: "Aucune compétence ajoutée",
+                previewHobbiesTitle: "Loisirs",
+                noHobbiesText: "Aucun loisir ajouté",
+                downloadPdf: "Télécharger PDF (une page)",
+                downloadWord: "Télécharger Word",
+                printBtn: "Imprimer",
+                successMessage: "CV enregistré avec succès! Vous pouvez maintenant le télécharger en PDF.",
+                accessCodePlaceholder: "Entrez le code d'activation",
+                namePlaceholder: "Entrez votre nom complet",
+                jobPlaceholder: "Titre professionnel",
+                heightPlaceholder: "Taille en centimètres",
+                phonePlaceholder: "Numéro de téléphone",
+                emailPlaceholder: "Adresse e-mail",
+                educationPlaceholder: "Ex: Licence en Informatique - Université du Caire - 2020",
+                experiencePlaceholder: "Ex: Développeur Web - Société Tech - 2021-2023",
+                skillsPlaceholder: "Ex: Leadership, Communication, Programmation",
+                hobbiesPlaceholder: "Ex: Lecture, Voyage, Sport"
+            },
+            en: {
+                protectionTitle: "Access Dali AI Application",
+                protectionText: "Enter the activation code to access the application",
+                unlockBtn: "Open Application",
+                errorMessage: "Incorrect activation code. Please try again.",
+                appTitle: "CV Builder - Dali AI",
+                appSubtitle: "Create your professional CV easily and download it as PDF",
+                settingsTitle: "CV Settings",
+                templateLabel: "Choose a CV template",
+                classicTemplate: "Classic",
+                classicLabel: "Classic",
+                modernTemplate: "Modern",
+                modernLabel: "Modern",
+                professionalTemplate: "Professional",
+                professionalLabel: "Professional",
+                elegantTemplate: "Elegant",
+                elegantLabel: "Elegant",
+                creativeTemplate: "Creative",
+                creativeLabel: "Creative",
+                minimalTemplate: "Minimal",
+                minimalLabel: "Minimal",
+                boldTemplate: "Bold",
+                boldLabel: "Bold",
+                gradientTemplate: "Gradient",
+                gradientLabel: "Gradient",
+                colorLabel: "Choose CV color",
+                photoLabel: "Upload Profile Photo",
+                photoText: "Profile Photo",
+                uploadButton: "Upload Photo",
+                positionLabel: "Photo position in CV",
+                personalInfoTitle: "Personal Information",
+                nameLabel: "Full Name",
+                jobTitleLabel: "Job Title",
+                birthDateLabel: "Birth Date",
+                heightLabel: "Height",
+                phoneLabel: "Phone Number",
+                emailLabel: "Email Address",
+                educationTitle: "Education",
+                educationLabel: "Academic Certificates (one per line)",
+                experienceTitle: "Professional Experience",
+                experienceLabel: "Work Experience (one per line)",
+                skillsTitle: "Skills",
+                skillsLabel: "Skills (separated by commas)",
+                hobbiesTitle: "Hobbies",
+                hobbiesLabel: "Hobbies (separated by commas)",
+                saveBtn: "Save Changes",
+                resetBtn: "Reset",
+                darkModeBtn: "Dark Mode",
+                previewTitle: "CV Preview",
+                previewPersonalTitle: "Personal Information",
+                previewBirthLabel: "Birth Date:",
+                previewHeightLabel: "Height:",
+                previewPhoneLabel: "Phone:",
+                previewEmailLabel: "Email:",
+                previewEducationTitle: "Education",
+                noEducationText: "No education added yet",
+                previewExperienceTitle: "Professional Experience",
+                noExperienceText: "No experience added yet",
+                previewSkillsTitle: "Skills",
+                noSkillsText: "No skills added yet",
+                previewHobbiesTitle: "Hobbies",
+                noHobbiesText: "No hobbies added yet",
+                downloadPdf: "Download PDF (One Page)",
+                downloadWord: "Download Word",
+                printBtn: "Print",
+                successMessage: "CV saved successfully! You can now download it as PDF.",
+                accessCodePlaceholder: "Enter activation code",
+                namePlaceholder: "Enter your full name",
+                jobPlaceholder: "Job Title",
+                heightPlaceholder: "Height in centimeters",
+                phonePlaceholder: "Phone number",
+                emailPlaceholder: "Email address",
+                educationPlaceholder: "Ex: Bachelor in Computer Science - Cairo University - 2020",
+                experiencePlaceholder: "Ex: Web Developer - Tech Company - 2021-2023",
+                skillsPlaceholder: "Ex: Leadership, Communication, Programming",
+                hobbiesPlaceholder: "Ex: Reading, Travel, Sports"
+            }
         };
 
-        // تهيئة التطبيق
-        document.addEventListener('DOMContentLoaded', function() {
-            // تحميل البيانات المحفوظة
-            loadSavedData();
+        // نظام الحماية
+        const protectionScreen = document.getElementById('protectionScreen');
+        const mainApp = document.getElementById('mainApp');
+        const accessCodeInput = document.getElementById('accessCode');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const correctCode = "اللهم صلي و سلم على سيدنا محمد"; // كود التفعيل الجديد
+        
+        // تغيير اللغة في شاشة الحماية
+        function changeProtectionLanguage(lang) {
+            const elements = document.querySelectorAll('[id]');
+            elements.forEach(element => {
+                const id = element.id;
+                if (translations[lang] && translations[lang][id]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[lang][id];
+                    } else {
+                        element.textContent = translations[lang][id];
+                    }
+                }
+            });
+        }
+        
+        // تغيير اللغة في التطبيق الرئيسي
+        function changeAppLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
             
-            // إعداد معالجي الأحداث
-            setupEventListeners();
-            
-            // تحديث المعاينة أول مرة
-            updatePreview();
-            
-            // إعداد تحميل الصورة
-            document.getElementById('imageUpload').addEventListener('change', function(e) {
-                if (e.target.files.length > 0) {
-                    const file = e.target.files[0];
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(event) {
-                        document.getElementById('imagePreview').src = event.target.result;
-                        updatePreview();
-                    };
-                    
-                    reader.readAsDataURL(file);
+            const elements = document.querySelectorAll('[id]');
+            elements.forEach(element => {
+                const id = element.id;
+                if (translations[lang] && translations[lang][id]) {
+                    if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.placeholder = translations[lang][id];
+                    } else {
+                        element.textContent = translations[lang][id];
+                    }
                 }
             });
             
-            // إعداد أزرار موقع الصورة
-            document.querySelectorAll('.pos-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    imagePosition = this.getAttribute('data-pos');
-                    updatePreview();
-                });
+            // تحديث أزرار اللغة النشطة
+            document.querySelectorAll('.app-lang-btn').forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
             });
-            
-            // إعداد أزرار القوالب
-            document.querySelectorAll('.template').forEach(template => {
-                template.addEventListener('click', function() {
-                    document.querySelectorAll('.template').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    currentTemplate = this.getAttribute('data-template');
-                    updatePreview();
-                });
+        }
+        
+        // إضافة مستمعي الأحداث لأزرار اللغة في التطبيق
+        document.querySelectorAll('.app-lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const lang = this.getAttribute('data-lang');
+                changeAppLanguage(lang);
             });
         });
-
-        // إعداد معالجي الأحداث
-        function setupEventListeners() {
-            // معاينة
-            document.getElementById('previewBtn').addEventListener('click', updatePreview);
+        
+        unlockBtn.addEventListener('click', function() {
+            const enteredCode = accessCodeInput.value.trim();
             
-            // حفظ
-            document.getElementById('saveBtn').addEventListener('click', saveData);
-            
-            // تصدير PDF
-            document.getElementById('exportPdf').addEventListener('click', exportToPDF);
-            
-            // تصدير Word
-            document.getElementById('exportWord').addEventListener('click', exportToWord);
-            
-            // طباعة
-            document.getElementById('printBtn').addEventListener('click', printCV);
-            
-            // تبديل الوضع الداكن
-            document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
-            
-            // تحديث تلقائي عند تغيير المدخلات
-            document.querySelectorAll('.form-control').forEach(input => {
-                input.addEventListener('input', updatePreview);
-            });
-            
-            // تغيير اللغة
-            document.getElementById('language').addEventListener('change', changeLanguage);
-        }
-
-        // تحديث المعاينة
-        function updatePreview() {
-            const preview = document.getElementById('cvPreview');
-            
-            // تحديث فئة القالب
-            preview.className = `cv-preview template${currentTemplate}`;
-            
-            // تحديث موقع الصورة
-            preview.classList.remove('image-left', 'image-center', 'image-right');
-            if (imagePosition === 'left') preview.classList.add('image-left');
-            else if (imagePosition === 'center') preview.classList.add('image-center');
-            else preview.classList.add('image-right');
-            
-            // جمع البيانات من النموذج
-            const fullName = document.getElementById('fullName').value || "ريتشارد سانشيز";
-            const jobTitle = document.getElementById('jobTitle').value || "مصمم منتجات";
-            const about = document.getElementById('about').value || "مصمم منتجات مبدع مع خبرة في تصميم الواجهات والتجارب الرقمية. أتمتع بمهارات قوية في البحث عن المستخدمين وحل المشكلات الإبداعية.";
-            const phone = document.getElementById('phone').value || "+123-456-7890";
-            const email = document.getElementById('email').value || "hello@example.com";
-            const address = document.getElementById('address').value || "سيدني، أستراليا";
-            const imageSrc = document.getElementById('imagePreview').src;
-            
-            // تحديث HTML المعاينة
-            let previewHTML = '';
-            
-            // الهيكل يختلف حسب القالب
-            if (currentTemplate === '1') {
-                previewHTML = generateTemplate1(fullName, jobTitle, about, phone, email, address, imageSrc);
-            } else if (currentTemplate === '2') {
-                previewHTML = generateTemplate2(fullName, jobTitle, about, phone, email, address, imageSrc);
-            } else if (currentTemplate === '3') {
-                previewHTML = generateTemplate3(fullName, jobTitle, about, phone, email, address, imageSrc);
-            } else if (currentTemplate === '4') {
-                previewHTML = generateTemplate4(fullName, jobTitle, about, phone, email, address, imageSrc);
-            } else if (currentTemplate === '5') {
-                previewHTML = generateTemplate5(fullName, jobTitle, about, phone, email, address, imageSrc);
-            } else if (currentTemplate === '6') {
-                previewHTML = generateTemplate6(fullName, jobTitle, about, phone, email, address, imageSrc);
-            } else if (currentTemplate === '7') {
-                previewHTML = generateTemplate7(fullName, jobTitle, about, phone, email, address, imageSrc);
-            }
-            
-            preview.innerHTML = previewHTML;
-        }
-
-        // قالب 1: التصميم الكلاسيكي
-        function generateTemplate1(fullName, jobTitle, about, phone, email, address, imageSrc) {
-            // تجميع الخبرات
-            let experiencesHTML = '';
-            const experienceItems = document.querySelectorAll('#experiences .experience-item');
-            experienceItems.forEach(item => {
-                const company = item.children[0].value || "Arrowal Industries";
-                const position = item.children[1].value || "مصمم منتجات أول";
-                const date = item.children[2].value || "2020 - 2022";
-                const description = item.children[3].value || "قمت بتصميم وتطوير منتجات رقمية مبتكرة بالتعاون مع فرق التطوير والتسويق.";
-                
-                experiencesHTML += `
-                    <div class="job">
-                        <div class="job-header">
-                            <div class="company">${company}</div>
-                            <div class="date">${date}</div>
-                        </div>
-                        <div class="position">${position}</div>
-                        <p>${description}</p>
-                    </div>
-                `;
-            });
-            
-            // تجميع التعليم
-            let educationsHTML = '';
-            const educationItems = document.querySelectorAll('#educations .education-item');
-            educationItems.forEach(item => {
-                const institution = item.children[0].value || "Borcelle University";
-                const degree = item.children[1].value || "ماجستير في إدارة الأعمال";
-                const date = item.children[2].value || "2014 - 2018";
-                
-                educationsHTML += `
-                    <div class="job">
-                        <div class="job-header">
-                            <div class="company">${institution}</div>
-                            <div class="date">${date}</div>
-                        </div>
-                        <div class="position">${degree}</div>
-                    </div>
-                `;
-            });
-            
-            // تجميع المهارات
-            let skillsHTML = '';
-            const skillsText = document.getElementById('skills').value || "التصميم, إدارة المشاريع, بحث المستخدم";
-            const skillsArray = skillsText.split(',').map(skill => skill.trim()).filter(skill => skill);
-            skillsArray.forEach(skill => {
-                skillsHTML += `<div class="skill-item">${skill}</div>`;
-            });
-            
-            // بناء الصورة
-            let imageHTML = '';
-            if (imageSrc && !imageSrc.includes('placeholder')) {
-                imageHTML = `<img src="${imageSrc}" alt="${fullName}" class="profile-img">`;
-            }
-            
-            // بناء الهيكل النهائي
-            let headerHTML = '';
-            if (imagePosition === 'center') {
-                headerHTML = `
-                    <div class="cv-header">
-                        ${imageHTML}
-                        <div class="name-title">
-                            <h1>${fullName}</h1>
-                            <h2>${jobTitle}</h2>
-                        </div>
-                        <div class="contact-info">
-                            <p>${phone}</p>
-                            <p>${email}</p>
-                            <p>${address}</p>
-                        </div>
-                    </div>
-                `;
-            } else if (imagePosition === 'left') {
-                headerHTML = `
-                    <div class="cv-header">
-                        ${imageHTML}
-                        <div style="flex: 1;">
-                            <div class="name-title">
-                                <h1>${fullName}</h1>
-                                <h2>${jobTitle}</h2>
-                            </div>
-                            <div class="contact-info">
-                                <p>${phone}</p>
-                                <p>${email}</p>
-                                <p>${address}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            if (enteredCode === correctCode) {
+                // الكود صحيح، إظهار التطبيق
+                protectionScreen.style.display = 'none';
+                mainApp.style.display = 'block';
             } else {
-                headerHTML = `
-                    <div class="cv-header">
-                        <div style="flex: 1;">
-                            <div class="name-title">
-                                <h1>${fullName}</h1>
-                                <h2>${jobTitle}</h2>
-                            </div>
-                            <div class="contact-info">
-                                <p>${phone}</p>
-                                <p>${email}</p>
-                                <p>${address}</p>
-                            </div>
-                        </div>
-                        ${imageHTML}
-                    </div>
-                `;
+                // الكود خاطئ، إظهار رسالة الخطأ
+                errorMessage.style.display = 'block';
+                accessCodeInput.value = '';
+                accessCodeInput.focus();
             }
-            
-            return `
-                ${headerHTML}
+        });
+        
+        // السماح بالدخول باستخدام زر Enter
+        accessCodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                unlockBtn.click();
+            }
+        });
+        
+        // العناصر الرئيسية
+        const cvPreview = document.getElementById('cvPreview');
+        const templateOptions = document.querySelectorAll('.template-option');
+        const colorOptions = document.querySelectorAll('.color-option');
+        const imageUpload = document.getElementById('imageUpload');
+        const uploadButton = document.getElementById('uploadButton');
+        const imagePreview = document.getElementById('imagePreview');
+        const saveBtn = document.getElementById('saveBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        const downloadPdfBtn = document.getElementById('downloadPdf');
+        const downloadWordBtn = document.getElementById('downloadWord');
+        const printBtn = document.getElementById('printBtn');
+        const successAlert = document.getElementById('successAlert');
+        const positionButtons = document.querySelectorAll('.position-btn');
+        
+        // عناصر المعاينة
+        const previewName = document.getElementById('previewName');
+        const previewTitleText = document.getElementById('previewTitleText');
+        const previewBirthDate = document.getElementById('previewBirthDate');
+        const previewHeight = document.getElementById('previewHeight');
+        const previewPhone = document.getElementById('previewPhone');
+        const previewEmail = document.getElementById('previewEmail');
+        const previewEducation = document.getElementById('previewEducation');
+        const previewExperience = document.getElementById('previewExperience');
+        const previewSkills = document.getElementById('previewSkills');
+        const previewHobbies = document.getElementById('previewHobbies');
+        
+        // متغيرات التطبيق
+        let currentTemplate = 'classic';
+        let currentImagePosition = 'right';
+        let profileImage = null;
+        
+        // اختيار القالب
+        templateOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                templateOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
                 
-                <div class="section">
-                    <h3>نبذة عني</h3>
-                    <p>${about}</p>
-                </div>
-                
-                ${experiencesHTML ? `
-                <div class="section">
-                    <h3>الخبرات العملية</h3>
-                    ${experiencesHTML}
-                </div>` : ''}
-                
-                ${educationsHTML ? `
-                <div class="section">
-                    <h3>التعليم</h3>
-                    ${educationsHTML}
-                </div>` : ''}
-                
-                ${skillsHTML ? `
-                <div class="section">
-                    <h3>المهارات</h3>
-                    <div class="skills-list">
-                        ${skillsHTML}
-                    </div>
-                </div>` : ''}
-            `;
-        }
-
-        // قوالب أخرى (مبسطة)
-        function generateTemplate2(fullName, jobTitle, about, phone, email, address, imageSrc) {
-            return `
-                <div style="display: flex; height: 100%;">
-                    <div style="width: 30%; background-color: #2c3e50; color: white; padding: 30px;">
-                        ${imageSrc && !imageSrc.includes('placeholder') ? 
-                            `<img src="${imageSrc}" alt="${fullName}" style="width: 100%; border-radius: 50%; border: 3px solid white; margin-bottom: 20px;">` : ''}
-                        <h2>${fullName}</h2>
-                        <h3>${jobTitle}</h3>
-                        
-                        <div style="margin-top: 30px;">
-                            <h4>معلومات الاتصال</h4>
-                            <p><i class="fas fa-phone"></i> ${phone}</p>
-                            <p><i class="fas fa-envelope"></i> ${email}</p>
-                            <p><i class="fas fa-map-marker-alt"></i> ${address}</p>
-                        </div>
-                        
-                        <div style="margin-top: 30px;">
-                            <h4>المهارات</h4>
-                            <p>${document.getElementById('skills').value || "التصميم, إدارة المشاريع, بحث المستخدم"}</p>
-                        </div>
-                    </div>
-                    
-                    <div style="width: 70%; padding: 30px;">
-                        <h3>نبذة عني</h3>
-                        <p>${about}</p>
-                        
-                        <h3 style="margin-top: 30px;">الخبرات العملية</h3>
-                        <p>${document.querySelector('#experiences .experience-item textarea')?.value || "قمت بتصميم وتطوير منتجات رقمية مبتكرة بالتعاون مع فرق التطوير والتسويق."}</p>
-                        
-                        <h3 style="margin-top: 30px;">التعليم</h3>
-                        <p>${document.querySelector('#educations .education-item input')?.value || "Borcelle University"}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function generateTemplate3(fullName, jobTitle, about, phone, email, address, imageSrc) {
-            return `
-                <div style="text-align: center; padding: 20px;">
-                    ${imageSrc && !imageSrc.includes('placeholder') ? 
-                        `<img src="${imageSrc}" alt="${fullName}" style="width: 150px; height: 150px; border-radius: 50%; border: 5px solid #e74c3c; margin: 0 auto 20px;">` : ''}
-                    
-                    <h1 style="color: #2c3e50; margin-bottom: 5px;">${fullName}</h1>
-                    <h2 style="color: #e74c3c; margin-bottom: 20px;">${jobTitle}</h2>
-                    
-                    <div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 30px;">
-                        <span><i class="fas fa-phone"></i> ${phone}</span>
-                        <span><i class="fas fa-envelope"></i> ${email}</span>
-                        <span><i class="fas fa-map-marker-alt"></i> ${address}</span>
-                    </div>
-                    
-                    <div style="text-align: right; margin-bottom: 30px;">
-                        <h3 style="border-bottom: 2px solid #e74c3c; padding-bottom: 5px; display: inline-block;">نبذة عني</h3>
-                        <p>${about}</p>
-                    </div>
-                    
-                    <div style="text-align: right;">
-                        <h3 style="border-bottom: 2px solid #e74c3c; padding-bottom: 5px; display: inline-block;">المهارات</h3>
-                        <p>${document.getElementById('skills').value || "التصميم, إدارة المشاريع, بحث المستخدم"}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // القوالب 4-7 ستبنى بشكل مشابه ولكن مع أنماط مختلفة
-        function generateTemplate4(fullName, jobTitle, about, phone, email, address, imageSrc) {
-            return generateTemplate1(fullName, jobTitle, about, phone, email, address, imageSrc);
-        }
-
-        function generateTemplate5(fullName, jobTitle, about, phone, email, address, imageSrc) {
-            return generateTemplate1(fullName, jobTitle, about, phone, email, address, imageSrc);
-        }
-
-        function generateTemplate6(fullName, jobTitle, about, phone, email, address, imageSrc) {
-            return generateTemplate1(fullName, jobTitle, about, phone, email, address, imageSrc);
-        }
-
-        function generateTemplate7(fullName, jobTitle, about, phone, email, address, imageSrc) {
-            return generateTemplate1(fullName, jobTitle, about, phone, email, address, imageSrc);
-        }
-
-        // إضافة خبرة جديدة
-        function addExperience() {
-            const experiencesDiv = document.getElementById('experiences');
-            const newExp = document.createElement('div');
-            newExp.className = 'experience-item';
-            newExp.innerHTML = `
-                <input type="text" class="form-control" placeholder="اسم الشركة" style="margin-bottom: 10px;">
-                <input type="text" class="form-control" placeholder="المسمى الوظيفي" style="margin-bottom: 10px;">
-                <input type="text" class="form-control" placeholder="الفترة (مثال: 2020 - 2022)" style="margin-bottom: 10px;">
-                <textarea class="form-control" placeholder="المسؤوليات والإنجازات" rows="3"></textarea>
-                <button class="btn btn-accent" onclick="removeExperience(this)" style="margin-top: 10px; padding: 8px 15px;">
-                    <i class="fas fa-trash"></i> حذف
-                </button>
-            `;
-            experiencesDiv.appendChild(newExp);
-            
-            // إضافة مستمعي الأحداث
-            newExp.querySelectorAll('input, textarea').forEach(input => {
-                input.addEventListener('input', updatePreview);
+                currentTemplate = option.getAttribute('data-template');
+                applyTemplate(currentTemplate);
+                updatePreview();
             });
-        }
-
-        // حذف خبرة
-        function removeExperience(button) {
-            button.parentElement.remove();
-            updatePreview();
-        }
-
-        // إضافة تعليم جديد
-        function addEducation() {
-            const educationsDiv = document.getElementById('educations');
-            const newEdu = document.createElement('div');
-            newEdu.className = 'education-item';
-            newEdu.innerHTML = `
-                <input type="text" class="form-control" placeholder="اسم المؤسسة التعليمية" style="margin-bottom: 10px;">
-                <input type="text" class="form-control" placeholder="التخصص/الشهادة" style="margin-bottom: 10px;">
-                <input type="text" class="form-control" placeholder="الفترة (مثال: 2014 - 2018)" style="margin-bottom: 10px;">
-                <button class="btn btn-accent" onclick="removeEducation(this)" style="margin-top: 10px; padding: 8px 15px;">
-                    <i class="fas fa-trash"></i> حذف
-                </button>
-            `;
-            educationsDiv.appendChild(newEdu);
+        });
+        
+        // تطبيق القالب المختار
+        function applyTemplate(template) {
+            cvPreview.className = 'cv-a4 single-page';
+            cvPreview.classList.add(`template-${template}`);
+            cvPreview.classList.add(`frame-${template}`);
             
-            // إضافة مستمعي الأحداث
-            newEdu.querySelectorAll('input').forEach(input => {
-                input.addEventListener('input', updatePreview);
-            });
-        }
-
-        // حذف تعليم
-        function removeEducation(button) {
-            button.parentElement.remove();
-            updatePreview();
-        }
-
-        // حفظ البيانات
-        function saveData() {
-            // جمع البيانات
-            cvData = {
-                personalInfo: {
-                    fullName: document.getElementById('fullName').value,
-                    jobTitle: document.getElementById('jobTitle').value,
-                    about: document.getElementById('about').value,
-                    phone: document.getElementById('phone').value,
-                    email: document.getElementById('email').value,
-                    address: document.getElementById('address').value,
-                    image: document.getElementById('imagePreview').src
-                },
-                experiences: [],
-                educations: [],
-                skills: document.getElementById('skills').value.split(',').map(s => s.trim()).filter(s => s),
-                template: currentTemplate,
-                imagePosition: imagePosition
-            };
-            
-            // حفظ الخبرات
-            document.querySelectorAll('#experiences .experience-item').forEach(item => {
-                cvData.experiences.push({
-                    company: item.children[0].value,
-                    position: item.children[1].value,
-                    date: item.children[2].value,
-                    description: item.children[3].value
-                });
-            });
-            
-            // حفظ التعليم
-            document.querySelectorAll('#educations .education-item').forEach(item => {
-                cvData.educations.push({
-                    institution: item.children[0].value,
-                    degree: item.children[1].value,
-                    date: item.children[2].value
-                });
-            });
-            
-            // حفظ في localStorage
-            localStorage.setItem('cvData', JSON.stringify(cvData));
-            
-            // عرض إشعار
-            showAlert('تم حفظ التغييرات بنجاح!');
-        }
-
-        // تحميل البيانات المحفوظة
-        function loadSavedData() {
-            const savedData = localStorage.getItem('cvData');
-            if (savedData) {
-                cvData = JSON.parse(savedData);
-                
-                // تعبئة البيانات الشخصية
-                document.getElementById('fullName').value = cvData.personalInfo.fullName || '';
-                document.getElementById('jobTitle').value = cvData.personalInfo.jobTitle || '';
-                document.getElementById('about').value = cvData.personalInfo.about || '';
-                document.getElementById('phone').value = cvData.personalInfo.phone || '';
-                document.getElementById('email').value = cvData.personalInfo.email || '';
-                document.getElementById('address').value = cvData.personalInfo.address || '';
-                
-                if (cvData.personalInfo.image && !cvData.personalInfo.image.includes('placeholder')) {
-                    document.getElementById('imagePreview').src = cvData.personalInfo.image;
-                }
-                
-                // تعبئة المهارات
-                document.getElementById('skills').value = cvData.skills ? cvData.skills.join(', ') : '';
-                
-                // تعيين القالب وموقع الصورة
-                if (cvData.template) {
-                    currentTemplate = cvData.template;
-                    document.querySelectorAll('.template').forEach(t => t.classList.remove('active'));
-                    document.querySelector(`.template[data-template="${cvData.template}"]`).classList.add('active');
-                }
-                
-                if (cvData.imagePosition) {
-                    imagePosition = cvData.imagePosition;
-                    document.querySelectorAll('.pos-btn').forEach(b => b.classList.remove('active'));
-                    document.querySelector(`.pos-btn[data-pos="${cvData.imagePosition}"]`).classList.add('active');
-                }
-                
-                // ملء الخبرات (سيتم تطويرها بشكل كامل في نسخة متقدمة)
-                // ملء التعليم (سيتم تطويرها بشكل كامل في نسخة متقدمة)
+            // إضافة الصورة الشخصية إذا كانت موجودة
+            if (profileImage) {
+                addProfileImageToTemplate(profileImage, currentImagePosition);
             }
         }
-
-        // تصدير إلى PDF
-        function exportToPDF() {
-            const preview = document.getElementById('cvPreview');
+        
+        // إضافة الصورة الشخصية للقالب
+        function addProfileImageToTemplate(imageSrc, position) {
+            // إزالة الصورة الحالية إذا كانت موجودة
+            const existingImg = cvPreview.querySelector('.profile-img');
+            if (existingImg) {
+                existingImg.remove();
+            }
             
-            // استخدام html2canvas لالتقاط لقطة
-            html2canvas(preview, {
-                scale: 2,
+            const header = cvPreview.querySelector('.header');
+            if (!header) return;
+            
+            // إنشاء عنصر الصورة
+            const img = document.createElement('img');
+            img.src = imageSrc;
+            img.alt = "الصورة الشخصية";
+            img.className = 'profile-img';
+            
+            // الحصول على محتوى الرأس
+            const headerContent = header.querySelector('.header-content');
+            if (!headerContent) return;
+            
+            // تطبيق موضع الصورة بناءً على القالب
+            if (currentTemplate === 'classic' || currentTemplate === 'elegant' || 
+                currentTemplate === 'bold' || currentTemplate === 'gradient' || 
+                currentTemplate === 'minimal') {
+                // للقوالب المركزة، إضافة الصورة قبل محتوى الرأس
+                header.innerHTML = '';
+                header.appendChild(img);
+                header.appendChild(headerContent);
+                header.style.display = 'flex';
+                header.style.flexDirection = 'column';
+                header.style.alignItems = 'center';
+                header.style.textAlign = 'center';
+            } 
+            else if (currentTemplate === 'modern' || currentTemplate === 'creative') {
+                // للقوالب الأفقية
+                header.innerHTML = '';
+                if (position === 'right') {
+                    header.appendChild(headerContent);
+                    header.appendChild(img);
+                } else if (position === 'left') {
+                    header.appendChild(img);
+                    header.appendChild(headerContent);
+                } else {
+                    // الوسط
+                    header.appendChild(img);
+                    header.appendChild(headerContent);
+                }
+                header.style.display = 'flex';
+                header.style.alignItems = 'center';
+                header.style.justifyContent = 'space-between';
+            }
+            else if (currentTemplate === 'professional') {
+                // للقالب الاحترافي
+                header.innerHTML = '';
+                const container = document.createElement('div');
+                container.style.display = 'grid';
+                container.style.gridTemplateColumns = '1fr 2fr';
+                container.style.gap = '30px';
+                container.style.alignItems = 'center';
+                container.style.width = '100%';
+                
+                if (position === 'right') {
+                    container.appendChild(headerContent);
+                    container.appendChild(img);
+                } else if (position === 'left') {
+                    container.appendChild(img);
+                    container.appendChild(headerContent);
+                } else {
+                    // الوسط
+                    container.appendChild(img);
+                    container.appendChild(headerContent);
+                }
+                
+                header.appendChild(container);
+            }
+        }
+        
+        // اختيار موضع الصورة
+        positionButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                positionButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentImagePosition = this.getAttribute('data-position');
+                
+                if (profileImage) {
+                    addProfileImageToTemplate(profileImage, currentImagePosition);
+                }
+            });
+        });
+        
+        // اختيار اللون
+        colorOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                colorOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                
+                const color = option.getAttribute('data-color');
+                document.documentElement.style.setProperty('--primary', color);
+                
+                updatePreview();
+            });
+        });
+        
+        // رفع الصورة
+        uploadButton.addEventListener('click', () => {
+            imageUpload.click();
+        });
+        
+        imageUpload.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    profileImage = e.target.result;
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="الصورة الشخصية">`;
+                    addProfileImageToTemplate(profileImage, currentImagePosition);
+                }
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+        
+        // حفظ التغييرات
+        saveBtn.addEventListener('click', updatePreview);
+        
+        // إعادة تعيين
+        resetBtn.addEventListener('click', function() {
+            if (confirm('هل أنت متأكد من إعادة تعيين جميع البيانات؟')) {
+                document.querySelectorAll('input, textarea').forEach(element => {
+                    element.value = '';
+                });
+                
+                imagePreview.innerHTML = '<span id="photoText">صورة الشخصية</span>';
+                profileImage = null;
+                
+                // إزالة الصورة من المعاينة
+                const existingImg = cvPreview.querySelector('.profile-img');
+                if (existingImg) {
+                    existingImg.remove();
+                }
+                
+                // إعادة تعيين المعاينة
+                previewName.textContent = 'الاسم الكامل';
+                previewTitleText.textContent = 'المسمى الوظيفي';
+                previewBirthDate.textContent = '-';
+                previewHeight.textContent = '-';
+                previewPhone.textContent = '-';
+                previewEmail.textContent = '-';
+                previewEducation.innerHTML = '<p id="noEducationText">لم يتم إضافة مؤهلات علمية بعد</p>';
+                previewExperience.innerHTML = '<p id="noExperienceText">لم يتم إضافة خبرات مهنية بعد</p>';
+                previewSkills.innerHTML = '<span class="skill-tag" id="noSkillsText">لم يتم إضافة مهارات بعد</span>';
+                previewHobbies.innerHTML = '<span class="hobby-tag" id="noHobbiesText">لم يتم إضافة هوايات بعد</span>';
+                
+                // تحديث النصوص بعد إعادة التعيين
+                changeAppLanguage(document.documentElement.lang);
+                
+                // إظهار رسالة النجاح
+                showSuccessAlert();
+            }
+        });
+        
+        // الوضع الداكن - محسن
+        darkModeBtn.addEventListener('click', function() {
+            const isDark = cvPreview.classList.toggle('dark-mode');
+            
+            // تحديث جميع النصوص في الوضع الداكن
+            if (isDark) {
+                // تطبيق الألوان الداكنة على جميع النصوص
+                document.querySelectorAll('#cvPreview .section-title-cv, #cvPreview p, #cvPreview span, #cvPreview strong')
+                    .forEach(el => {
+                        if (!el.classList.contains('skill-tag') && !el.classList.contains('hobby-tag')) {
+                            el.style.color = '#f9fafb';
+                        }
+                    });
+            } else {
+                // إعادة الألوان العادية
+                document.querySelectorAll('#cvPreview .section-title-cv, #cvPreview p, #cvPreview span, #cvPreview strong')
+                    .forEach(el => {
+                        if (!el.classList.contains('skill-tag') && !el.classList.contains('hobby-tag')) {
+                            el.style.color = '';
+                        }
+                    });
+            }
+        });
+        
+        // تحميل PDF - صفحة واحدة فقط مع دقة عالية
+        downloadPdfBtn.addEventListener('click', function() {
+            // استخدام html2canvas و jsPDF لتحويل السيرة الذاتية إلى PDF
+            const { jsPDF } = window.jspdf;
+            
+            // حفظ الحالة الحالية للعرض
+            const originalTransform = cvPreview.style.transform;
+            const originalWidth = cvPreview.style.width;
+            const originalScale = cvPreview.style.transform;
+            
+            // إعداد الحجم الصحيح للتصدير
+            cvPreview.style.transform = 'scale(1)';
+            cvPreview.style.width = '210mm';
+            cvPreview.style.position = 'absolute';
+            cvPreview.style.left = '0';
+            cvPreview.style.top = '0';
+            cvPreview.style.zIndex = '10000';
+            
+            // إعدادات html2canvas محسنة للجودة العالية
+            html2canvas(cvPreview, {
+                scale: 2, // زيادة الدقة
                 useCORS: true,
-                logging: false
+                logging: false,
+                width: 794, // 210mm * 3.78 = 794px
+                height: 1123, // 297mm * 3.78 = 1123px
+                windowWidth: 794,
+                windowHeight: 1123,
+                backgroundColor: cvPreview.classList.contains('dark-mode') ? '#1f2937' : '#ffffff'
             }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf.jsPDF({
+                // إرجاع الحالة الأصلية
+                cvPreview.style.transform = originalScale;
+                cvPreview.style.width = originalWidth;
+                cvPreview.style.position = '';
+                cvPreview.style.zIndex = '';
+                
+                const imgData = canvas.toDataURL('image/jpeg', 1.0); // جودة عالية
+                const pdf = new jsPDF({
                     orientation: 'portrait',
                     unit: 'mm',
                     format: 'a4'
                 });
                 
-                const imgWidth = 210; // عرض A4 بالملليمتر
+                const imgWidth = 210;
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                // التأكد من أن الصورة لا تتجاوز صفحة واحدة
+                pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
                 pdf.save('السيرة_الذاتية.pdf');
                 
-                showAlert('تم تصدير PDF بنجاح!');
+                // إظهار رسالة النجاح
+                showSuccessAlert('تم تحميل السيرة الذاتية بصيغة PDF (صفحة واحدة) بنجاح!');
+            }).catch(error => {
+                console.error('Error generating PDF:', error);
+                // إرجاع الحالة الأصلية في حالة الخطأ
+                cvPreview.style.transform = originalScale;
+                cvPreview.style.width = originalWidth;
+                alert('حدث خطأ أثناء إنشاء ملف PDF. يرجى المحاولة مرة أخرى.');
             });
-        }
-
-        // تصدير إلى Word
-        function exportToWord() {
-            const preview = document.getElementById('cvPreview');
-            const content = preview.innerHTML;
-            
-            // إنشاء محتوى HTML لملف Word
-            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='UTF-8'><title>السيرة الذاتية</title></head><body>";
-            const footer = "</body></html>";
-            const htmlContent = header + content + footer;
-            
-            // إنشاء blob وربطه برابط تحميل
-            const blob = new Blob(['\ufeff', htmlContent], {
-                type: 'application/msword'
-            });
-            
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'السيرة_الذاتية.doc';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showAlert('تم تصدير Word بنجاح!');
-        }
-
-        // طباعة
-        function printCV() {
-            const printWindow = window.open('', '_blank');
-            const content = document.getElementById('cvPreview').innerHTML;
-            
-            printWindow.document.write(`
-                <html dir="rtl">
+        });
+        
+        // تحميل Word (محاكاة باستخدام HTML)
+        downloadWordBtn.addEventListener('click', function() {
+            // إنشاء محتوى HTML للسيرة الذاتية
+            const cvContent = `
+                <!DOCTYPE html>
+                <html>
                 <head>
-                    <title>طباعة السيرة الذاتية</title>
+                    <meta charset="UTF-8">
+                    <title>السيرة الذاتية - ${previewName.textContent}</title>
                     <style>
-                        body { font-family: 'Cairo', sans-serif; padding: 20px; }
-                        @media print {
-                            @page { margin: 0; }
-                            body { margin: 1.6cm; }
-                        }
+                        body { font-family: Arial, sans-serif; margin: 40px; direction: ${document.documentElement.dir}; }
+                        h1 { color: #1e40af; }
+                        .section { margin-bottom: 20px; }
+                        .section-title { color: #1e40af; border-bottom: 1px solid #ccc; padding-bottom: 5px; }
                     </style>
                 </head>
                 <body>
-                    ${content}
-                    <script>
-                        window.onload = function() {
-                            window.print();
-                            window.onafterprint = function() {
-                                window.close();
-                            };
-                        };
-                    <\/script>
+                    <h1>${previewName.textContent}</h1>
+                    <h2>${previewTitleText.textContent}</h2>
+                    
+                    <div class="section">
+                        <h3 class="section-title">${document.getElementById('previewPersonalTitle').textContent}</h3>
+                        <p><strong>${document.getElementById('previewBirthLabel').textContent}</strong> ${previewBirthDate.textContent}</p>
+                        <p><strong>${document.getElementById('previewHeightLabel').textContent}</strong> ${previewHeight.textContent}</p>
+                        <p><strong>${document.getElementById('previewPhoneLabel').textContent}</strong> ${previewPhone.textContent}</p>
+                        <p><strong>${document.getElementById('previewEmailLabel').textContent}</strong> ${previewEmail.textContent}</p>
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">${document.getElementById('previewEducationTitle').textContent}</h3>
+                        ${previewEducation.innerHTML}
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">${document.getElementById('previewExperienceTitle').textContent}</h3>
+                        ${previewExperience.innerHTML}
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">${document.getElementById('previewSkillsTitle').textContent}</h3>
+                        ${previewSkills.innerHTML}
+                    </div>
+                    
+                    <div class="section">
+                        <h3 class="section-title">${document.getElementById('previewHobbiesTitle').textContent}</h3>
+                        ${previewHobbies.innerHTML}
+                    </div>
                 </body>
                 </html>
-            `);
+            `;
             
-            printWindow.document.close();
-        }
-
-        // تبديل الوضع الداكن
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark-mode', isDarkMode);
-            document.getElementById('themeToggle').innerHTML = isDarkMode ? 
-                '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-        }
-
-        // تغيير اللغة
-        function changeLanguage() {
-            const lang = document.getElementById('language').value;
-            // في تطبيق حقيقي، هنا سيتم تحميل النصوص المناسبة للغة
-            showAlert(`تم تغيير اللغة إلى ${lang === 'ar' ? 'العربية' : lang === 'fr' ? 'الفرنسية' : 'الإنجليزية'}`);
-        }
-
-        // عرض إشعار
-        function showAlert(message) {
-            const alert = document.getElementById('alert');
-            alert.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-            alert.classList.add('show');
+            // إنشاء ملف Word (HTML يمكن فتحه في Word)
+            const blob = new Blob([cvContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'السيرة_الذاتية.doc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             
+            // إظهار رسالة النجاح
+            showSuccessAlert('تم تحميل السيرة الذاتية بصيغة Word بنجاح!');
+        });
+        
+        // طباعة
+        printBtn.addEventListener('click', function() {
+            window.print();
+        });
+        
+        // تحديث المعاينة
+        function updatePreview() {
+            // المعلومات الشخصية
+            const fullName = document.getElementById('fullName').value || document.getElementById('nameLabel').textContent;
+            const jobTitle = document.getElementById('jobTitle').value || document.getElementById('jobTitleLabel').textContent;
+            const birthDate = document.getElementById('birthDate').value || '-';
+            const height = document.getElementById('height').value || '-';
+            const phone = document.getElementById('phone').value || '-';
+            const email = document.getElementById('email').value || '-';
+            
+            previewName.textContent = fullName;
+            previewTitleText.textContent = jobTitle;
+            previewBirthDate.textContent = formatDate(birthDate);
+            previewHeight.textContent = height;
+            previewPhone.textContent = phone;
+            previewEmail.textContent = email;
+            
+            // المؤهلات العلمية
+            const education = document.getElementById('education').value;
+            if (education) {
+                const educationLines = education.split('\n').filter(line => line.trim() !== '');
+                previewEducation.innerHTML = educationLines.map(line => `<p>${line}</p>`).join('');
+            } else {
+                previewEducation.innerHTML = `<p id="noEducationText">${document.getElementById('noEducationText').textContent}</p>`;
+            }
+            
+            // الخبرات المهنية
+            const experience = document.getElementById('experience').value;
+            if (experience) {
+                const experienceLines = experience.split('\n').filter(line => line.trim() !== '');
+                previewExperience.innerHTML = experienceLines.map(line => `<p>${line}</p>`).join('');
+            } else {
+                previewExperience.innerHTML = `<p id="noExperienceText">${document.getElementById('noExperienceText').textContent}</p>`;
+            }
+            
+            // المهارات
+            const skills = document.getElementById('skills').value;
+            if (skills) {
+                const skillsArray = skills.split(',').map(skill => skill.trim()).filter(skill => skill !== '');
+                previewSkills.innerHTML = skillsArray.map(skill => `<span class="skill-tag">${skill}</span>`).join('');
+            } else {
+                previewSkills.innerHTML = `<span class="skill-tag" id="noSkillsText">${document.getElementById('noSkillsText').textContent}</span>`;
+            }
+            
+            // الهوايات
+            const hobbies = document.getElementById('hobbies').value;
+            if (hobbies) {
+                const hobbiesArray = hobbies.split(',').map(hobby => hobby.trim()).filter(hobby => hobby !== '');
+                previewHobbies.innerHTML = hobbiesArray.map(hobby => `<span class="hobby-tag">${hobby}</span>`).join('');
+            } else {
+                previewHobbies.innerHTML = `<span class="hobby-tag" id="noHobbiesText">${document.getElementById('noHobbiesText').textContent}</span>`;
+            }
+            
+            // إظهار رسالة النجاح
+            showSuccessAlert();
+        }
+        
+        // تنسيق التاريخ بالأرقام العادية
+        function formatDate(dateString) {
+            if (!dateString || dateString === '-') return '-';
+            
+            const date = new Date(dateString);
+            
+            // استخدام الأرقام الإنجليزية دائماً بغض النظر عن اللغة
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}`;
+        }
+        
+        // إظهار رسالة النجاح
+        function showSuccessAlert(message) {
+            if (!message) {
+                const lang = document.documentElement.lang;
+                message = translations[lang].successMessage;
+            }
+            
+            successAlert.textContent = message;
+            successAlert.style.display = 'block';
             setTimeout(() => {
-                alert.classList.remove('show');
+                successAlert.style.display = 'none';
             }, 3000);
         }
+        
+        // تهيئة أولية
+        changeProtectionLanguage('ar');
+        changeAppLanguage('ar');
+        updatePreview();
     </script>
 </body>
 </html>
