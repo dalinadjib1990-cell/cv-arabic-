@@ -256,9 +256,15 @@
         
         .templates-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 25px;
+        }
+        
+        @media (max-width: 768px) {
+            .templates-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
         
         .template-option {
@@ -362,6 +368,22 @@
             pointer-events: none;
         }
         
+        .frame-minimal {
+            border: 2px solid #6b7280;
+            background: white;
+        }
+        
+        .frame-bold {
+            border: 5px solid #dc2626;
+            background: white;
+        }
+        
+        .frame-gradient {
+            border: 2px solid transparent;
+            background: linear-gradient(white, white) padding-box,
+                        linear-gradient(135deg, #3b82f6, #8b5cf6) border-box;
+        }
+        
         .actions {
             display: flex;
             gap: 10px;
@@ -424,6 +446,17 @@
             padding: 30px;
             text-align: center;
             margin: -20mm -20mm 30px -20mm;
+            position: relative;
+        }
+        
+        .template-classic .profile-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
         .template-modern .header {
@@ -435,19 +468,29 @@
             margin-bottom: 30px;
         }
         
+        .template-modern .profile-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #10b981;
+        }
+        
         .template-professional .header {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 30px;
+            gap: 40px;
             margin-bottom: 30px;
+            align-items: center;
         }
         
         .template-professional .profile-img {
-            width: 150px;
-            height: 150px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #7c3aed;
+            border: 4px solid #7c3aed;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .template-elegant .header {
@@ -458,30 +501,83 @@
         }
         
         .template-elegant .profile-img {
-            width: 120px;
-            height: 120px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 15px;
-            border: 3px solid #3b82f6;
+            margin-bottom: 20px;
+            border: 4px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .template-creative .header {
             display: flex;
             align-items: center;
-            gap: 30px;
+            gap: 40px;
             margin-bottom: 30px;
-            padding: 20px;
+            padding: 25px;
             background: linear-gradient(135deg, #fef3c7, #f59e0b);
             border-radius: 10px;
         }
         
         .template-creative .profile-img {
-            width: 120px;
-            height: 120px;
+            width: 160px;
+            height: 160px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid white;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .template-minimal .header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .template-minimal .profile-img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 2px solid #6b7280;
+        }
+        
+        .template-bold .header {
+            background: #dc2626;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            margin: -20mm -20mm 30px -20mm;
+        }
+        
+        .template-bold .profile-img {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            margin-bottom: 15px;
+        }
+        
+        .template-gradient .header {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin: -20mm -20mm 30px -20mm;
+            border-radius: 0 0 20px 20px;
+        }
+        
+        .template-gradient .profile-img {
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
         }
         
         .skills-list, .hobbies-list {
@@ -499,7 +595,7 @@
         }
         
         .section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         .section-title-cv {
@@ -541,6 +637,16 @@
             display: none;
         }
         
+        /* تحسينات لمحتوى السيرة الذاتية */
+        .cv-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .personal-info p {
+            margin-bottom: 5px;
+        }
+        
         @media print {
             body * {
                 visibility: hidden;
@@ -554,6 +660,7 @@
                 top: 0;
                 width: 100%;
                 box-shadow: none;
+                padding: 15mm;
             }
             .no-print {
                 display: none;
@@ -601,6 +708,21 @@
             background: var(--primary);
             color: white;
             border-color: var(--primary);
+        }
+        
+        /* تنظيم المحتوى ليكون في صفحة واحدة */
+        .single-page {
+            max-height: 297mm;
+            overflow: hidden;
+        }
+        
+        .compact-section {
+            margin-bottom: 15px;
+        }
+        
+        .compact-section .section-title-cv {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
         }
     </style>
 </head>
@@ -677,6 +799,27 @@
                             </div>
                             <span id="creativeLabel">إبداعي</span>
                         </div>
+                        <div class="template-option" data-template="minimal">
+                            <div class="template-preview">
+                                <div class="template-frame frame-minimal"></div>
+                                <span id="minimalTemplate">بسيط</span>
+                            </div>
+                            <span id="minimalLabel">بسيط</span>
+                        </div>
+                        <div class="template-option" data-template="bold">
+                            <div class="template-preview">
+                                <div class="template-frame frame-bold"></div>
+                                <span id="boldTemplate">جريء</span>
+                            </div>
+                            <span id="boldLabel">جريء</span>
+                        </div>
+                        <div class="template-option" data-template="gradient">
+                            <div class="template-preview">
+                                <div class="template-frame frame-gradient"></div>
+                                <span id="gradientTemplate">متدرج</span>
+                            </div>
+                            <span id="gradientLabel">متدرج</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -688,6 +831,7 @@
                         <div class="color-option" style="background-color: #7c3aed;" data-color="#7c3aed"></div>
                         <div class="color-option" style="background-color: #dc2626;" data-color="#dc2626"></div>
                         <div class="color-option" style="background-color: #d97706;" data-color="#d97706"></div>
+                        <div class="color-option" style="background-color: #6b7280;" data-color="#6b7280"></div>
                     </div>
                 </div>
                 
@@ -744,15 +888,15 @@
                 <h2 class="section-title" id="educationTitle">المؤهلات العلمية</h2>
                 
                 <div class="form-group">
-                    <label for="education" id="educationLabel">الشهادات العلمية</label>
-                    <textarea id="education" rows="4" placeholder="اذكر شهاداتك العلمية (شهادة، المؤسسة، السنة)"></textarea>
+                    <label for="education" id="educationLabel">الشهادات العلمية (اكتب كل شهادة في سطر)</label>
+                    <textarea id="education" rows="3" placeholder="مثال: بكالوريوس في علوم الحاسوب - جامعة القاهرة - 2020"></textarea>
                 </div>
                 
                 <h2 class="section-title" id="experienceTitle">الخبرات المهنية</h2>
                 
                 <div class="form-group">
-                    <label for="experience" id="experienceLabel">الخبرات العملية</label>
-                    <textarea id="experience" rows="4" placeholder="اذكر خبراتك العملية (المسمى الوظيفي، الشركة، الفترة)"></textarea>
+                    <label for="experience" id="experienceLabel">الخبرات العملية (اكتب كل خبرة في سطر)</label>
+                    <textarea id="experience" rows="3" placeholder="مثال: مطور ويب - شركة التقنية - 2021-2023"></textarea>
                 </div>
                 
                 <h2 class="section-title" id="skillsTitle">المهارات</h2>
@@ -773,6 +917,7 @@
                     <button class="btn btn-success" id="saveBtn">حفظ التغييرات</button>
                     <button class="btn btn-secondary" id="resetBtn">إعادة تعيين</button>
                     <button class="btn" id="darkModeBtn">الوضع الداكن</button>
+                    <button class="btn" id="compactBtn">تنسيق صفحة واحدة</button>
                 </div>
             </div>
             
@@ -780,54 +925,56 @@
                 <h2 class="section-title" id="previewTitle">معاينة السيرة الذاتية</h2>
                 
                 <div class="cv-preview">
-                    <div class="cv-a4 template-classic frame-classic" id="cvPreview">
-                        <div class="header">
-                            <h1 id="previewName">الاسم الكامل</h1>
-                            <p id="previewTitleText">المسمى الوظيفي</p>
-                        </div>
-                        
-                        <div class="section">
-                            <h3 class="section-title-cv" id="previewPersonalTitle">المعلومات الشخصية</h3>
-                            <div class="personal-info">
-                                <p><strong id="previewBirthLabel">تاريخ الميلاد:</strong> <span id="previewBirthDate">-</span></p>
-                                <p><strong id="previewHeightLabel">الطول:</strong> <span id="previewHeight">-</span></p>
-                                <p><strong id="previewPhoneLabel">الهاتف:</strong> <span id="previewPhone">-</span></p>
-                                <p><strong id="previewEmailLabel">البريد الإلكتروني:</strong> <span id="previewEmail">-</span></p>
+                    <div class="cv-a4 template-classic frame-classic single-page" id="cvPreview">
+                        <div class="cv-content">
+                            <div class="header">
+                                <h1 id="previewName">الاسم الكامل</h1>
+                                <p id="previewTitleText">المسمى الوظيفي</p>
                             </div>
-                        </div>
-                        
-                        <div class="section">
-                            <h3 class="section-title-cv" id="previewEducationTitle">المؤهلات العلمية</h3>
-                            <div id="previewEducation">
-                                <p id="noEducationText">لم يتم إضافة مؤهلات علمية بعد</p>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewPersonalTitle">المعلومات الشخصية</h3>
+                                <div class="personal-info">
+                                    <p><strong id="previewBirthLabel">تاريخ الميلاد:</strong> <span id="previewBirthDate">-</span></p>
+                                    <p><strong id="previewHeightLabel">الطول:</strong> <span id="previewHeight">-</span></p>
+                                    <p><strong id="previewPhoneLabel">الهاتف:</strong> <span id="previewPhone">-</span></p>
+                                    <p><strong id="previewEmailLabel">البريد الإلكتروني:</strong> <span id="previewEmail">-</span></p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="section">
-                            <h3 class="section-title-cv" id="previewExperienceTitle">الخبرات المهنية</h3>
-                            <div id="previewExperience">
-                                <p id="noExperienceText">لم يتم إضافة خبرات مهنية بعد</p>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewEducationTitle">المؤهلات العلمية</h3>
+                                <div id="previewEducation">
+                                    <p id="noEducationText">لم يتم إضافة مؤهلات علمية بعد</p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="section">
-                            <h3 class="section-title-cv" id="previewSkillsTitle">المهارات</h3>
-                            <div class="skills-list" id="previewSkills">
-                                <span class="skill-tag" id="noSkillsText">لم يتم إضافة مهارات بعد</span>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewExperienceTitle">الخبرات المهنية</h3>
+                                <div id="previewExperience">
+                                    <p id="noExperienceText">لم يتم إضافة خبرات مهنية بعد</p>
+                                </div>
                             </div>
-                        </div>
-                        
-                        <div class="section">
-                            <h3 class="section-title-cv" id="previewHobbiesTitle">الهوايات</h3>
-                            <div class="hobbies-list" id="previewHobbies">
-                                <span class="hobby-tag" id="noHobbiesText">لم يتم إضافة هوايات بعد</span>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewSkillsTitle">المهارات</h3>
+                                <div class="skills-list" id="previewSkills">
+                                    <span class="skill-tag" id="noSkillsText">لم يتم إضافة مهارات بعد</span>
+                                </div>
+                            </div>
+                            
+                            <div class="compact-section">
+                                <h3 class="section-title-cv" id="previewHobbiesTitle">الهوايات</h3>
+                                <div class="hobbies-list" id="previewHobbies">
+                                    <span class="hobby-tag" id="noHobbiesText">لم يتم إضافة هوايات بعد</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="actions">
-                    <button class="btn btn-success" id="downloadPdf">تحميل PDF</button>
+                    <button class="btn btn-success" id="downloadPdf">تحميل PDF (صفحة واحدة)</button>
                     <button class="btn" id="downloadWord">تحميل Word</button>
                     <button class="btn" id="printBtn">طباعة</button>
                 </div>
@@ -857,6 +1004,12 @@
                 elegantLabel: "أنيق",
                 creativeTemplate: "إبداعي",
                 creativeLabel: "إبداعي",
+                minimalTemplate: "بسيط",
+                minimalLabel: "بسيط",
+                boldTemplate: "جريء",
+                boldLabel: "جريء",
+                gradientTemplate: "متدرج",
+                gradientLabel: "متدرج",
                 colorLabel: "اختر لون السيرة الذاتية",
                 photoLabel: "رفع الصورة الشخصية",
                 photoText: "صورة الشخصية",
@@ -870,9 +1023,9 @@
                 phoneLabel: "رقم الهاتف",
                 emailLabel: "البريد الإلكتروني",
                 educationTitle: "المؤهلات العلمية",
-                educationLabel: "الشهادات العلمية",
+                educationLabel: "الشهادات العلمية (اكتب كل شهادة في سطر)",
                 experienceTitle: "الخبرات المهنية",
-                experienceLabel: "الخبرات العملية",
+                experienceLabel: "الخبرات العملية (اكتب كل خبرة في سطر)",
                 skillsTitle: "المهارات",
                 skillsLabel: "المهارات (افصل بينها بفاصلة)",
                 hobbiesTitle: "الهوايات",
@@ -880,6 +1033,7 @@
                 saveBtn: "حفظ التغييرات",
                 resetBtn: "إعادة تعيين",
                 darkModeBtn: "الوضع الداكن",
+                compactBtn: "تنسيق صفحة واحدة",
                 previewTitle: "معاينة السيرة الذاتية",
                 previewPersonalTitle: "المعلومات الشخصية",
                 previewBirthLabel: "تاريخ الميلاد:",
@@ -894,7 +1048,7 @@
                 noSkillsText: "لم يتم إضافة مهارات بعد",
                 previewHobbiesTitle: "الهوايات",
                 noHobbiesText: "لم يتم إضافة هوايات بعد",
-                downloadPdf: "تحميل PDF",
+                downloadPdf: "تحميل PDF (صفحة واحدة)",
                 downloadWord: "تحميل Word",
                 printBtn: "طباعة",
                 successMessage: "تم حفظ السيرة الذاتية بنجاح! يمكنك الآن تحميلها بصيغة PDF.",
@@ -904,8 +1058,8 @@
                 heightPlaceholder: "الطول بالسنتيمتر",
                 phonePlaceholder: "رقم الهاتف",
                 emailPlaceholder: "البريد الإلكتروني",
-                educationPlaceholder: "اذكر شهاداتك العلمية (شهادة، المؤسسة، السنة)",
-                experiencePlaceholder: "اذكر خبراتك العملية (المسمى الوظيفي، الشركة، الفترة)",
+                educationPlaceholder: "مثال: بكالوريوس في علوم الحاسوب - جامعة القاهرة - 2020",
+                experiencePlaceholder: "مثال: مطور ويب - شركة التقنية - 2021-2023",
                 skillsPlaceholder: "مثال: القيادة، الاتصال، البرمجة",
                 hobbiesPlaceholder: "مثال: القراءة، السفر، الرياضة"
             },
@@ -928,6 +1082,12 @@
                 elegantLabel: "Élégant",
                 creativeTemplate: "Créatif",
                 creativeLabel: "Créatif",
+                minimalTemplate: "Minimal",
+                minimalLabel: "Minimal",
+                boldTemplate: "Audacieux",
+                boldLabel: "Audacieux",
+                gradientTemplate: "Dégradé",
+                gradientLabel: "Dégradé",
                 colorLabel: "Choisissez la couleur du CV",
                 photoLabel: "Télécharger la photo",
                 photoText: "Photo de profil",
@@ -941,9 +1101,9 @@
                 phoneLabel: "Numéro de téléphone",
                 emailLabel: "Adresse e-mail",
                 educationTitle: "Formation académique",
-                educationLabel: "Diplômes et certificats",
+                educationLabel: "Diplômes et certificats (un par ligne)",
                 experienceTitle: "Expérience professionnelle",
-                experienceLabel: "Expériences professionnelles",
+                experienceLabel: "Expériences professionnelles (une par ligne)",
                 skillsTitle: "Compétences",
                 skillsLabel: "Compétences (séparées par des virgules)",
                 hobbiesTitle: "Loisirs",
@@ -951,6 +1111,7 @@
                 saveBtn: "Enregistrer les modifications",
                 resetBtn: "Réinitialiser",
                 darkModeBtn: "Mode sombre",
+                compactBtn: "Format page unique",
                 previewTitle: "Aperçu du CV",
                 previewPersonalTitle: "Informations personnelles",
                 previewBirthLabel: "Date de naissance:",
@@ -965,7 +1126,7 @@
                 noSkillsText: "Aucune compétence ajoutée",
                 previewHobbiesTitle: "Loisirs",
                 noHobbiesText: "Aucun loisir ajouté",
-                downloadPdf: "Télécharger PDF",
+                downloadPdf: "Télécharger PDF (une page)",
                 downloadWord: "Télécharger Word",
                 printBtn: "Imprimer",
                 successMessage: "CV enregistré avec succès! Vous pouvez maintenant le télécharger en PDF.",
@@ -975,10 +1136,10 @@
                 heightPlaceholder: "Taille en centimètres",
                 phonePlaceholder: "Numéro de téléphone",
                 emailPlaceholder: "Adresse e-mail",
-                educationPlaceholder: "Mentionnez vos diplômes (diplôme, établissement, année)",
-                experiencePlaceholder: "Mentionnez vos expériences (poste, entreprise, période)",
-                skillsPlaceholder: "Exemple: Leadership, Communication, Programmation",
-                hobbiesPlaceholder: "Exemple: Lecture, Voyage, Sport"
+                educationPlaceholder: "Ex: Licence en Informatique - Université du Caire - 2020",
+                experiencePlaceholder: "Ex: Développeur Web - Société Tech - 2021-2023",
+                skillsPlaceholder: "Ex: Leadership, Communication, Programmation",
+                hobbiesPlaceholder: "Ex: Lecture, Voyage, Sport"
             },
             en: {
                 protectionTitle: "Access Dali AI Application",
@@ -999,6 +1160,12 @@
                 elegantLabel: "Elegant",
                 creativeTemplate: "Creative",
                 creativeLabel: "Creative",
+                minimalTemplate: "Minimal",
+                minimalLabel: "Minimal",
+                boldTemplate: "Bold",
+                boldLabel: "Bold",
+                gradientTemplate: "Gradient",
+                gradientLabel: "Gradient",
                 colorLabel: "Choose CV color",
                 photoLabel: "Upload Profile Photo",
                 photoText: "Profile Photo",
@@ -1012,9 +1179,9 @@
                 phoneLabel: "Phone Number",
                 emailLabel: "Email Address",
                 educationTitle: "Education",
-                educationLabel: "Academic Certificates",
+                educationLabel: "Academic Certificates (one per line)",
                 experienceTitle: "Professional Experience",
-                experienceLabel: "Work Experience",
+                experienceLabel: "Work Experience (one per line)",
                 skillsTitle: "Skills",
                 skillsLabel: "Skills (separated by commas)",
                 hobbiesTitle: "Hobbies",
@@ -1022,6 +1189,7 @@
                 saveBtn: "Save Changes",
                 resetBtn: "Reset",
                 darkModeBtn: "Dark Mode",
+                compactBtn: "Single Page Format",
                 previewTitle: "CV Preview",
                 previewPersonalTitle: "Personal Information",
                 previewBirthLabel: "Birth Date:",
@@ -1036,7 +1204,7 @@
                 noSkillsText: "No skills added yet",
                 previewHobbiesTitle: "Hobbies",
                 noHobbiesText: "No hobbies added yet",
-                downloadPdf: "Download PDF",
+                downloadPdf: "Download PDF (One Page)",
                 downloadWord: "Download Word",
                 printBtn: "Print",
                 successMessage: "CV saved successfully! You can now download it as PDF.",
@@ -1046,10 +1214,10 @@
                 heightPlaceholder: "Height in centimeters",
                 phonePlaceholder: "Phone number",
                 emailPlaceholder: "Email address",
-                educationPlaceholder: "Mention your certificates (certificate, institution, year)",
-                experiencePlaceholder: "Mention your experiences (position, company, period)",
-                skillsPlaceholder: "Example: Leadership, Communication, Programming",
-                hobbiesPlaceholder: "Example: Reading, Travel, Sports"
+                educationPlaceholder: "Ex: Bachelor in Computer Science - Cairo University - 2020",
+                experiencePlaceholder: "Ex: Web Developer - Tech Company - 2021-2023",
+                skillsPlaceholder: "Ex: Leadership, Communication, Programming",
+                hobbiesPlaceholder: "Ex: Reading, Travel, Sports"
             }
         };
 
@@ -1143,6 +1311,7 @@
         const saveBtn = document.getElementById('saveBtn');
         const resetBtn = document.getElementById('resetBtn');
         const darkModeBtn = document.getElementById('darkModeBtn');
+        const compactBtn = document.getElementById('compactBtn');
         const downloadPdfBtn = document.getElementById('downloadPdf');
         const downloadWordBtn = document.getElementById('downloadWord');
         const printBtn = document.getElementById('printBtn');
@@ -1165,6 +1334,7 @@
         let currentTemplate = 'classic';
         let currentImagePosition = 'right';
         let profileImage = null;
+        let isCompactMode = true;
         
         // اختيار القالب
         templateOptions.forEach(option => {
@@ -1180,7 +1350,7 @@
         
         // تطبيق القالب المختار
         function applyTemplate(template) {
-            cvPreview.className = 'cv-a4';
+            cvPreview.className = 'cv-a4 single-page';
             cvPreview.classList.add(`template-${template}`);
             cvPreview.classList.add(`frame-${template}`);
             
@@ -1308,47 +1478,55 @@
             cvPreview.classList.toggle('dark-mode');
         });
         
-        // تحميل PDF - الإصاح المحسن
+        // وضع الصفحة الواحدة
+        compactBtn.addEventListener('click', function() {
+            isCompactMode = !isCompactMode;
+            if (isCompactMode) {
+                cvPreview.classList.add('single-page');
+                this.textContent = 'تنسيق صفحة واحدة';
+            } else {
+                cvPreview.classList.remove('single-page');
+                this.textContent = 'تنسيق عادي';
+            }
+        });
+        
+        // تحميل PDF - صفحة واحدة فقط
         downloadPdfBtn.addEventListener('click', function() {
             // استخدام html2canvas و jsPDF لتحويل السيرة الذاتية إلى PDF
             const { jsPDF } = window.jspdf;
             
-            // إعدادات html2canvas محسنة
+            // إعدادات html2canvas محسنة لصفحة واحدة
+            const originalHeight = cvPreview.scrollHeight;
+            const originalWidth = cvPreview.scrollWidth;
+            
+            // حساب المقياس المناسب لصفحة واحدة
+            const scale = Math.min(1.5, 210 / originalWidth * 25.4); // A4 width in mm
+            
             html2canvas(cvPreview, {
-                scale: 2,
+                scale: scale,
                 useCORS: true,
                 logging: false,
-                width: cvPreview.scrollWidth,
-                height: cvPreview.scrollHeight,
+                width: originalWidth,
+                height: originalHeight,
                 scrollX: 0,
                 scrollY: 0,
-                windowWidth: cvPreview.scrollWidth,
-                windowHeight: cvPreview.scrollHeight
+                windowWidth: originalWidth,
+                windowHeight: originalHeight
             }).then(canvas => {
                 const imgData = canvas.toDataURL('image/png');
                 const pdf = new jsPDF('p', 'mm', 'a4');
                 const imgWidth = 210; // عرض A4 بالملم
                 const imgHeight = (canvas.height * imgWidth) / canvas.width;
                 
-                // حساب الارتفاع لملاءمة الصفحة
-                let heightLeft = imgHeight;
-                let position = 0;
+                // التأكد من أن الصورة لا تتجاوز صفحة واحدة
+                const maxHeight = 297; // ارتفاع A4 بالملم
+                const finalHeight = Math.min(imgHeight, maxHeight);
                 
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                heightLeft -= 297; // ارتفاع A4
-                
-                // إضافة صفحات إضافية إذا لزم الأمر
-                while (heightLeft > 0) {
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= 297;
-                }
-                
+                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, finalHeight);
                 pdf.save('السيرة_الذاتية.pdf');
                 
                 // إظهار رسالة النجاح
-                showSuccessAlert('تم تحميل السيرة الذاتية بصيغة PDF بنجاح!');
+                showSuccessAlert('تم تحميل السيرة الذاتية بصيغة PDF (صفحة واحدة) بنجاح!');
             }).catch(error => {
                 console.error('Error generating PDF:', error);
                 alert('حدث خطأ أثناء إنشاء ملف PDF. يرجى المحاولة مرة أخرى.');
@@ -1483,19 +1661,24 @@
             showSuccessAlert();
         }
         
-        // تنسيق التاريخ
+        // تنسيق التاريخ بالأرقام العادية
         function formatDate(dateString) {
             if (!dateString || dateString === '-') return '-';
             
             const date = new Date(dateString);
             const lang = document.documentElement.lang;
             
+            // استخدام الأرقام الإنجليزية دائماً بغض النظر عن اللغة
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            
             if (lang === 'ar') {
-                return date.toLocaleDateString('ar-EG');
+                return `${year}-${month}-${day}`;
             } else if (lang === 'fr') {
-                return date.toLocaleDateString('fr-FR');
+                return `${day}/${month}/${year}`;
             } else {
-                return date.toLocaleDateString('en-US');
+                return `${year}-${month}-${day}`;
             }
         }
         
