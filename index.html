@@ -545,7 +545,7 @@
             z-index: 2;
         }
 
-        /* أشكال الصورة في المخرجات - إصلاح المشكلة هنا */
+        /* أشكال الصورة في المخرجات - إصلاح مشكلة السداسي في PDF */
         .profile-img {
             width: 140px;
             height: 140px;
@@ -561,8 +561,27 @@
             border-radius: 10px;
         }
 
+        /* إصلاح خاص: إضافة SVG كخلفية لشكل السداسي ليعمل مع html2canvas */
         .profile-img-hexagon {
+            position: relative;
             border-radius: 0;
+        }
+
+        .profile-img-hexagon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+            z-index: 1;
+        }
+
+        .profile-img-hexagon img {
+            position: relative;
+            z-index: 2;
             clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
         }
 
@@ -1029,6 +1048,25 @@
                     <i class="fas fa-plus-circle"></i> إضافة لغة جديدة
                 </button>
                 
+                <!-- قسم الشهادات الجديد -->
+                <h3 class="section-title" style="margin-top: 30px;"><i class="fas fa-certificate"></i> الشهادات</h3>
+                <div id="certificatesContainer">
+                    <div class="dynamic-item">
+                        <div class="form-group">
+                            <input type="text" class="form-control certificate-name" value="شهادة تصميم UX من Google" placeholder="اسم الشهادة">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control certificate-issuer" value="Google" placeholder="جهة الإصدار">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control certificate-date" value="2021" placeholder="سنة الحصول">
+                        </div>
+                    </div>
+                </div>
+                <button class="add-item-btn" onclick="addCertificate()">
+                    <i class="fas fa-plus-circle"></i> إضافة شهادة جديدة
+                </button>
+                
                 <div class="btn-group">
                     <button class="btn btn-primary" id="previewBtn">
                         <i class="fas fa-eye"></i> معاينة السيرة
@@ -1165,7 +1203,7 @@
                 });
             });
             
-            // إعداد أزرار القوالب - إصلاح المشكلة هنا
+            // إعداد أزرار القوالب
             document.querySelectorAll('.template').forEach(template => {
                 template.addEventListener('click', function() {
                     document.querySelectorAll('.template').forEach(t => t.classList.remove('active'));
@@ -1234,11 +1272,11 @@
             document.getElementById('themeToggle').addEventListener('click', toggleDarkMode);
         }
 
-        // تحديث المعاينة - إصلاح المشكلة هنا
+        // تحديث المعاينة
         function updatePreview() {
             const preview = document.getElementById('cvPreview');
             
-            // إصلاح المشكلة 1: تحديث القالب بشكل صحيح
+            // تحديث القالب بشكل صحيح
             preview.className = `cv-preview template${currentTemplate} image-position-${imagePosition}`;
             
             // جمع البيانات من النموذج
@@ -1260,7 +1298,7 @@
             }
         }
 
-        // إنشاء قالب السيرة الذاتية - إصلاح المشكلة هنا
+        // إنشاء قالب السيرة الذاتية
         function generateCVTemplate(fullName, jobTitle, about, phone, email, address, imageSrc) {
             // جمع الخبرات
             let experiencesHTML = '';
@@ -1342,20 +1380,44 @@
                 `;
             });
             
-            // بناء صورة الملف الشخصي - إصلاح المشكلة 2: تطبيق شكل الصورة في المخرجات
+            // جمع الشهادات - جعلها ديناميكية
+            let certificatesHTML = '';
+            const certificateItems = document.querySelectorAll('#certificatesContainer .dynamic-item');
+            certificateItems.forEach(item => {
+                const certificateName = item.querySelector('.certificate-name').value || "شهادة تصميم UX من Google";
+                const certificateIssuer = item.querySelector('.certificate-issuer').value || "Google";
+                const certificateDate = item.querySelector('.certificate-date').value || "2021";
+                
+                certificatesHTML += `
+                    <div class="item-description">
+                        • ${certificateName} - ${certificateIssuer} (${certificateDate})
+                    </div>
+                `;
+            });
+            
+            // بناء صورة الملف الشخصي - إصلاح مشكلة السداسي في PDF
             let profileImageHTML = '';
             if (imageSrc && !imageSrc.includes('placeholder')) {
                 // تحديد فئة الشكل بناءً على imageShape
                 let shapeClass = 'profile-img-circle';
+                let imgTag = `<img src="${imageSrc}" alt="${fullName}" class="profile-img ${shapeClass}">`;
+                
                 if (imageShape === 'square') {
                     shapeClass = 'profile-img-square';
+                    imgTag = `<img src="${imageSrc}" alt="${fullName}" class="profile-img ${shapeClass}">`;
                 } else if (imageShape === 'hexagon') {
+                    // إصلاح خاص: استخدام طريقة مختلفة للشكل السداسي ليعمل مع html2canvas
                     shapeClass = 'profile-img-hexagon';
+                    imgTag = `
+                        <div class="profile-img-hexagon">
+                            <img src="${imageSrc}" alt="${fullName}">
+                        </div>
+                    `;
                 }
                 
                 profileImageHTML = `
                     <div class="profile-img-container">
-                        <img src="${imageSrc}" alt="${fullName}" class="profile-img ${shapeClass}">
+                        ${imgTag}
                     </div>
                 `;
             }
@@ -1421,14 +1483,11 @@
                             </div>
                         </div>` : ''}
                         
+                        ${certificatesHTML ? `
                         <div class="cv-section">
                             <h3><i class="fas fa-certificate"></i> الشهادات</h3>
-                            <div class="item-description">
-                                • شهادة تصميم UX من Google (2021)<br>
-                                • شهادة إدارة المشاريع PMP (2020)<br>
-                                • شهادة التسويق الرقمي (2019)
-                            </div>
-                        </div>
+                            ${certificatesHTML}
+                        </div>` : ''}
                     </div>
                 </div>
             `;
@@ -1546,6 +1605,32 @@
             updatePreview();
         }
 
+        // إضافة شهادة جديدة - دالة جديدة
+        function addCertificate() {
+            const certificatesContainer = document.getElementById('certificatesContainer');
+            const newCert = document.createElement('div');
+            newCert.className = 'dynamic-item';
+            newCert.innerHTML = `
+                <div class="dynamic-item-header">
+                    <h4 style="color: var(--accent-color);">شهادة جديدة</h4>
+                    <button class="delete-btn" onclick="this.parentElement.parentElement.remove(); updatePreview();">
+                        <i class="fas fa-trash"></i> حذف
+                    </button>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control certificate-name" placeholder="اسم الشهادة">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control certificate-issuer" placeholder="جهة الإصدار">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control certificate-date" placeholder="سنة الحصول">
+                </div>
+            `;
+            certificatesContainer.appendChild(newCert);
+            updatePreview();
+        }
+
         // حفظ البيانات
         function saveData() {
             cvData = {
@@ -1619,41 +1704,91 @@
             }
         }
 
-        // تصدير إلى PDF
+        // تصدير إلى PDF - إصلاح مشكلة السداسي
         function exportToPDF() {
             const previewContainer = document.querySelector('.cv-preview-container');
             
-            // استخدام html2canvas لالتقاط لقطة
-            html2canvas(previewContainer, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-                backgroundColor: null,
-                width: 210 * 3.78, // تحويل mm إلى pixel (1mm = 3.78px)
-                height: 297 * 3.78
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jspdf.jsPDF({
-                    orientation: 'portrait',
-                    unit: 'mm',
-                    format: 'a4'
-                });
-                
-                // حساب الأبعاد لتناسب صفحة A4
-                const imgWidth = 210; // عرض A4 بالملليمتر
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                
-                // إضافة الصورة إلى PDF (صفحة واحدة فقط)
-                pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                
-                // حفظ الملف
-                pdf.save('السيرة_الذاتية_A4.pdf');
-                
-                showAlert('تم تصدير PDF بصفحة واحدة بنجاح!');
-            }).catch(error => {
-                console.error('خطأ في تصدير PDF:', error);
-                showAlert('حدث خطأ في التصدير، حاول مرة أخرى');
+            // نسخة مؤقتة من المحتوى لإصلاح مشكلة السداسي
+            const tempContainer = previewContainer.cloneNode(true);
+            
+            // إصلاح مشكلة الشكل السداسي
+            const hexagonImages = tempContainer.querySelectorAll('.profile-img-hexagon');
+            hexagonImages.forEach(imgContainer => {
+                const img = imgContainer.querySelector('img');
+                if (img) {
+                    // إنشاء عنصر canvas لرسم الصورة بشكل سداسي
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const imgElement = new Image();
+                    
+                    imgElement.onload = function() {
+                        canvas.width = 140;
+                        canvas.height = 140;
+                        
+                        // رسم شكل سداسي على canvas
+                        ctx.beginPath();
+                        ctx.moveTo(35, 0); // النقطة اليسرى العليا
+                        ctx.lineTo(105, 0); // النقطة اليمنى العليا
+                        ctx.lineTo(140, 70); // النقطة اليمنى الوسطى
+                        ctx.lineTo(105, 140); // النقطة اليمنى السفلى
+                        ctx.lineTo(35, 140); // النقطة اليسرى السفلى
+                        ctx.lineTo(0, 70); // النقطة اليسرى الوسطى
+                        ctx.closePath();
+                        ctx.clip();
+                        
+                        // رسم الصورة داخل الشكل السداسي
+                        ctx.drawImage(imgElement, 0, 0, 140, 140);
+                        
+                        // استبدال الصورة بـ canvas
+                        const dataURL = canvas.toDataURL('image/png');
+                        img.src = dataURL;
+                    };
+                    
+                    imgElement.src = img.src;
+                    imgElement.crossOrigin = "anonymous";
+                }
             });
+            
+            document.body.appendChild(tempContainer);
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.left = '-9999px';
+            
+            // استخدام html2canvas لالتقاط لقطة
+            setTimeout(() => {
+                html2canvas(tempContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    backgroundColor: null,
+                    width: 210 * 3.78,
+                    height: 297 * 3.78
+                }).then(canvas => {
+                    // إزالة الحاوية المؤقتة
+                    document.body.removeChild(tempContainer);
+                    
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jspdf.jsPDF({
+                        orientation: 'portrait',
+                        unit: 'mm',
+                        format: 'a4'
+                    });
+                    
+                    // حساب الأبعاد لتناسب صفحة A4
+                    const imgWidth = 210;
+                    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                    
+                    // إضافة الصورة إلى PDF
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                    
+                    // حفظ الملف
+                    pdf.save('السيرة_الذاتية_A4.pdf');
+                    
+                    showAlert('تم تصدير PDF بصفحة واحدة بنجاح!');
+                }).catch(error => {
+                    console.error('خطأ في تصدير PDF:', error);
+                    showAlert('حدث خطأ في التصدير، حاول مرة أخرى');
+                });
+            }, 1000);
         }
 
         // تصدير إلى Word
@@ -1785,4 +1920,3 @@
     </script>
 </body>
 </html>
-
